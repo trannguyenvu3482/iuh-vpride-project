@@ -1,10 +1,13 @@
+import React from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Home() {
+const Layout = () => {
   return (
-    <SafeAreaView className="">
-      <Text>Home</Text>
+    <SafeAreaView>
+      <Text>Layout</Text>
     </SafeAreaView>
   );
-}
+};
+
+export default Layout;
