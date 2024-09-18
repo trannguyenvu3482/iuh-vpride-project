@@ -15,7 +15,7 @@ const Welcome = () => {
       <Pressable
         className="w-full flex justify-end items-end p-5"
         onPress={() => {
-          router.replace("/(auth)/sign-up");
+          router.replace("/(auth)/otp-verify");
         }}
       >
         <Text className="text-black text-md font-JakartaBold">Bỏ qua</Text>
@@ -50,7 +50,7 @@ const Welcome = () => {
       <CustomButton
         onPress={() =>
           isLastScreen
-            ? router.replace("/(auth)/sign-up")
+            ? router.replace("/(auth)/otp-verify")
             : swiperRef.current?.scrollBy(1)
         }
         className="w-11/12 mb-8"

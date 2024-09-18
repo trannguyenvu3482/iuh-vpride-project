@@ -1,6 +1,15 @@
 import imageOnboarding1 from "../assets/images/onboarding1.png";
 import imageOnboarding2 from "../assets/images/onboarding2.png";
 import imageOnboarding3 from "../assets/images/onboarding3.png";
+import vietnamFlag from "../assets/images/vietnam-flag.png";
+import logoWithBG from "../assets/images/vpride-logo-with-bg.png";
+export const images = {
+  logoWithBG,
+};
+
+export const icons = {
+  vietnamFlag,
+};
 
 const onboarding = [
   {

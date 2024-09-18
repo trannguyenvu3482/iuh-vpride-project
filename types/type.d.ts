@@ -1,3 +1,5 @@
+import { TextInputProps } from "react-native";
+
 declare interface ICustomButton {
   onPress: () => void;
   title: string;
@@ -7,4 +9,15 @@ declare interface ICustomButton {
   IconRight?: React.ComponentType<any>;
   className?: string;
   [key: string]: any;
+}
+
+declare interface IInputField extends TextInputProps {
+  label: string;
+  icon?: any;
+  secureTextEntry?: boolean;
+  labelStyle?: string;
+  containerStyle?: string;
+  inputStyle?: string;
+  iconStyle?: string;
+  className?: string;
 }
