@@ -7,6 +7,7 @@ import React, { useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const OTPVerify = () => {
   const [form, setForm] = useState({
@@ -25,12 +26,17 @@ const OTPVerify = () => {
     setValid(checkValid ? checkValid : false);
     setIsVisible(true);
     console.log("valid", valid);
+    Toast.show({
+      type: `${valid ? "success" : "error"}`,
+      text1: `${valid ? "Thành công" : "Thất bại"}`,
+      position: "bottom",
+    });
   };
 
   return (
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white h-full">
       <SafeAreaView className="flex-1 bg-white">
-        <View className="relative w-full h-[40  %] max-h-[300px]">
+        <View className="relative w-full max-h-[300px]">
           <Image
             source={images.logoWithBG}
             className="z-0 w-full h-full"
@@ -40,7 +46,7 @@ const OTPVerify = () => {
             Bắt đầu ngay với VPRide
           </Text>
         </View>
-        <View className="p-5">
+        <View className="p-5 flex-1 h-full">
           <Text className={`text-lg font-JakartaSemiBold mb-3`}>
             Để bắt đầu, hãy nhập số điện thoại của bạn
           </Text>
@@ -64,6 +70,7 @@ const OTPVerify = () => {
           <OAuth />
         </View>
       </SafeAreaView>
+      <Toast />
     </ScrollView>
   );
 };
