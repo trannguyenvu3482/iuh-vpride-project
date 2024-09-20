@@ -1,23 +1,27 @@
-import React, { useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { View } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 
-const PhoneInputField = () => {
-  const [value, setValue] = useState("");
+const PhoneInputField = ({
+  phoneInputRef,
+  value,
+  onSetValue,
+}: {
+  phoneInputRef: React.RefObject<PhoneInput>;
+  value: string;
+  onSetValue: (value: string) => void;
+}) => {
   const [formattedValue, setFormattedValue] = useState("");
-  const [valid, setValid] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-  const phoneInput = useRef<PhoneInput>(null);
 
   return (
     <View>
       <PhoneInput
-        ref={phoneInput}
+        ref={phoneInputRef}
         defaultValue={value}
         defaultCode="VN"
         layout="first"
         onChangeText={(text) => {
-          setValue(text);
+          onSetValue(text);
         }}
         onChangeFormattedText={(text) => {
           setFormattedValue(text);
@@ -50,15 +54,15 @@ const PhoneInputField = () => {
           placeholder: "Nhập tên quốc gia",
         }}
       />
-      <TouchableOpacity
-        onPress={() => {
-          const checkValid = phoneInput.current?.isValidNumber(value);
-          setShowMessage(true);
-          setValid(checkValid ? checkValid : false);
-        }}
-      >
-        <Text>Check</Text>
-      </TouchableOpacity>
+      {/* <TouchableOpacity
+            onPress={() => {
+              const checkValid = phoneInput.current?.isValidNumber(value);
+              setShowMessage(true);
+              setValid(checkValid ? checkValid : false);
+            }}
+          >
+            <Text>Check</Text>
+          </TouchableOpacity> */}
     </View>
   );
 };

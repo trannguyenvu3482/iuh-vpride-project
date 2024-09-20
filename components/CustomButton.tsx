@@ -1,3 +1,4 @@
+import { ICustomButton } from "@/types/type";
 import React from "react";
 import { Pressable, Text } from "react-native";
 
@@ -21,7 +22,7 @@ const getBgVariantStyle = (
 };
 
 const getTextVariantStyle = (
-  variant: "primary" | "secondary" | "danger" | "success",
+  variant: "primary" | "secondary" | "danger" | "success" | "default",
 ) => {
   switch (variant) {
     case "primary":
@@ -41,7 +42,7 @@ const CustomButton = ({
   onPress,
   title,
   bgVariant = "primary",
-  textVariant,
+  textVariant = "default",
   IconLeft,
   IconRight,
   className,

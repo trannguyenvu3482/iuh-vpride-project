@@ -4,7 +4,7 @@ declare interface ICustomButton {
   onPress: () => void;
   title: string;
   bgVariant?: "primary" | "secondary" | "danger" | "success" | "outline";
-  textVariant?: "primary" | "secondary" | "danger" | "success";
+  textVariant?: "primary" | "secondary" | "danger" | "success" | "default";
   IconLeft?: React.ComponentType<any>;
   IconRight?: React.ComponentType<any>;
   className?: string;

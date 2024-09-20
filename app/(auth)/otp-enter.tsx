@@ -3,29 +3,19 @@ import OAuth from "@/components/OAuth";
 import PhoneInputField from "@/components/PhoneInputField";
 import { images } from "@/constants";
 import { Image } from "expo-image";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import PhoneInput from "react-native-phone-number-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const OTPVerify = () => {
+const OTPEnter = () => {
   const [form, setForm] = useState({
     name: "",
     phone: "",
     email: "",
     password: "",
   });
-  const phoneInputRef = useRef<PhoneInput>(null);
-  const [valid, setValid] = useState(false);
-  const [value, setValue] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
 
-  const handleVerify = () => {
-    const checkValid = phoneInputRef.current?.isValidNumber(value);
-    setValid(checkValid ? checkValid : false);
-    setIsVisible(true);
-    console.log("valid", valid);
-  };
+  const handleVerify = () => {};
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -51,16 +41,13 @@ const OTPVerify = () => {
             value={form.name}
             onChange={(value) => setForm({ ...form, name: value })}
           /> */}
-          <PhoneInputField
-            phoneInputRef={phoneInputRef}
-            value={value}
-            onSetValue={setValue}
-          />
+          <PhoneInputField />
           <CustomButton
             title="Xác thực"
             onPress={handleVerify}
             className="mt-6"
           />
+
           <OAuth />
         </View>
       </SafeAreaView>
@@ -68,4 +55,4 @@ const OTPVerify = () => {
   );
 };
 
-export default OTPVerify;
+export default OTPEnter;

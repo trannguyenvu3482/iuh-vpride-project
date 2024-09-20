@@ -1,8 +1,9 @@
 import CustomButton from "@/components/CustomButton";
 import { onboarding } from "@/constants";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
 const Welcome = () => {
@@ -33,14 +34,22 @@ const Welcome = () => {
       >
         {onboarding.map((item) => (
           <View key={item.id} className="flex items-center justify-center p-5">
-            <Image source={item.image} className="w-full h-[340px]" />
-            <View className="flex flex-row items-center justify-center w-full mt-10">
-              <Text className="text-black text-[28px] font-JakartaBold mx-6 text-center">
+            <Image
+              source={item.image}
+              className="w-full h-[60%] object-contain"
+              contentFit="contain"
+            />
+            <View className="flex flex-row items-center justify-center w-full mt-4">
+              <Text
+                className="text-black text-[28px]  font-JakartaBold mx-6 text-center"
+                adjustsFontSizeToFit
+                numberOfLines={2}
+              >
                 {item.title}
               </Text>
             </View>
             <View className="">
-              <Text className="text-lg font-JakartaMedium text-center text-[#858585] mx-6 mt-3">
+              <Text className="text-lg font-JakartaMedium text-center text-[#858585] mx-6 mt-2">
                 {item.description}
               </Text>
             </View>
