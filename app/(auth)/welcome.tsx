@@ -16,7 +16,7 @@ const Welcome = () => {
       <Pressable
         className="w-full flex justify-end items-end p-5"
         onPress={() => {
-          router.replace("/(auth)/otp-verify");
+          router.replace("/(auth)/otp-enter");
         }}
       >
         <Text className="text-black text-md font-JakartaBold">Bỏ qua</Text>
@@ -56,10 +56,11 @@ const Welcome = () => {
           </View>
         ))}
       </Swiper>
+      {/* TODO: CHANGE ROUTE TO OTP-CHECK */}
       <CustomButton
         onPress={() =>
           isLastScreen
-            ? router.replace("/(auth)/otp-verify")
+            ? router.replace("/(auth)/otp-enter")
             : swiperRef.current?.scrollBy(1)
         }
         className="w-11/12 mb-8"
