@@ -2,6 +2,7 @@ import CustomButton from "@/components/CustomButton";
 import OAuth from "@/components/OAuth";
 import PhoneInputField from "@/components/PhoneInputField";
 import { images } from "@/constants";
+import { getUserByPhone } from "@/utils/supabaseRequests";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -18,28 +19,62 @@ const OTPEnter = () => {
     password: "",
   });
   const phoneInputRef = useRef<PhoneInput>(null);
-  const [value, setValue] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
-  const [formattedValue, setFormattedValue] = useState("");
-  const valid = phoneInputRef.current?.isValidNumber(value);
+
   const handleVerify = async () => {
-    setIsVisible(true);
+    const valid = phoneInputRef.current?.isValidNumber(
+      phoneInputRef.current?.getNumberAfterPossiblyEliminatingZero().number,
+    );
+
     console.log("valid", valid);
-    Toast.show({
-      type: `${valid ? "success" : "error"}`,
-      text1: `${valid ? "Thành công" : "Thất bại"}`,
-      position: "bottom",
-    });
 
     if (valid) {
       try {
-        router.replace({
+        const phone =
+          phoneInputRef.current?.getNumberAfterPossiblyEliminatingZero()
+            .formattedNumber;
+
+        // Check user in db
+        if (!phone) return;
+        const user = await getUserByPhone(phone);
+
+        if (user) {
+          router.navigate({
+            pathname: "/(auth)/sign-in",
+            params: {
+              phone,
+            },
+          });
+        } else {
+          router.navigate({
+            pathname: "/(auth)/sign-up",
+            params: {
+              phone,
+            },
+          });
+        }
+
+        // Toast.show({
+        //   type: "info",
+        //   text1: `Đã gửi mã OTP cho số điện thoại ${phone}`,
+        //   text2: "",
+        //   position: "bottom",
+        // });
+
+        router.navigate({
           pathname: "/(auth)/otp-check",
-          params: { phone: formattedValue },
+          params: {
+            phone,
+          },
         });
       } catch (error: any) {
         console.error("Error sending OTP:", error.message);
       }
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Số điện thoại không hợp lệ",
+        position: "bottom",
+      });
     }
   };
 
@@ -67,13 +102,7 @@ const OTPEnter = () => {
             value={form.name}
             onChange={(value) => setForm({ ...form, name: value })}
           /> */}
-          <PhoneInputField
-            phoneInputRef={phoneInputRef}
-            value={value}
-            onSetValue={setValue}
-            onFormattedValueChange={setFormattedValue}
-            formattedValue={formattedValue}
-          />
+          <PhoneInputField phoneInputRef={phoneInputRef} />
           <CustomButton
             title="Xác thực"
             onPress={handleVerify}
@@ -82,7 +111,6 @@ const OTPEnter = () => {
           <OAuth />
         </View>
       </SafeAreaView>
-      <Toast />
     </ScrollView>
   );
 };

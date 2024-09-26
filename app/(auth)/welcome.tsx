@@ -41,7 +41,7 @@ const Welcome = () => {
             />
             <View className="flex flex-row items-center justify-center w-full mt-4">
               <Text
-                className="text-black text-[28px]  font-JakartaBold mx-6 text-center"
+                className="text-black text-[24px]  font-JakartaBold mx-6 text-center"
                 adjustsFontSizeToFit
                 numberOfLines={2}
               >

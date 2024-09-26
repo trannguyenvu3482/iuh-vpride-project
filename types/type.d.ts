@@ -21,3 +21,17 @@ declare interface IInputField extends TextInputProps {
   iconStyle?: string;
   className?: string;
 }
+
+declare interface ISupabaseClientOptions {
+  auth: {
+    storage: typeof AsyncStorage;
+    autoRefreshToken: boolean;
+    persistSession: boolean;
+    detectSessionInUrl: boolean;
+  };
+  global: {
+    headers: {
+      Authorization: string;
+    };
+  };
+}

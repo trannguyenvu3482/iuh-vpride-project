@@ -1,20 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 
 const PhoneInputField = ({
   phoneInputRef,
-  value,
-  formattedValue,
-  onSetValue,
-  onFormattedValueChange,
 }: {
   phoneInputRef: React.RefObject<PhoneInput>;
-  value: string;
-  formattedValue: string;
-  onSetValue: (value: string) => void;
-  onFormattedValueChange: (value: string) => void;
 }) => {
+  const [value, setValue] = useState("");
+
+  const [formattedValue, setFormattedValue] = useState("");
+
   return (
     <View>
       <PhoneInput
@@ -23,10 +19,10 @@ const PhoneInputField = ({
         defaultCode="VN"
         layout="first"
         onChangeText={(text) => {
-          onSetValue(text);
+          setValue(text);
         }}
         onChangeFormattedText={(text) => {
-          onFormattedValueChange(text);
+          setFormattedValue(text);
         }}
         autoFocus
         containerStyle={{
