@@ -3,10 +3,16 @@ import email from "../assets/icons/email.png";
 import home from "../assets/icons/home.png";
 import list from "../assets/icons/list.png";
 import lock from "../assets/icons/lock.png";
+import marker from "../assets/icons/marker.png";
+import out from "../assets/icons/out.png";
 import person from "../assets/icons/person.png";
+import point from "../assets/icons/point.png";
 import profile from "../assets/icons/profile.png";
+import search from "../assets/icons/search.png";
+import to from "../assets/icons/to.png";
 import check from "../assets/images/check.png";
 import googleLogo from "../assets/images/google.png";
+import noResults from "../assets/images/no-result.png";
 import imageOnboarding1 from "../assets/images/onboarding1.png";
 import imageOnboarding2 from "../assets/images/onboarding2.png";
 import imageOnboarding3 from "../assets/images/onboarding3.png";
@@ -15,6 +21,7 @@ import logoWithBG from "../assets/images/vpride-logo-with-bg.png";
 export const images = {
   logoWithBG,
   check,
+  noResults,
 };
 
 export const icons = {
@@ -27,6 +34,11 @@ export const icons = {
   chat,
   profile,
   list,
+  to,
+  point,
+  out,
+  search,
+  marker,
 };
 
 const onboarding = [

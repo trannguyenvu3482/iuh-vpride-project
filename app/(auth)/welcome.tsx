@@ -56,7 +56,6 @@ const Welcome = () => {
           </View>
         ))}
       </Swiper>
-      {/* TODO: CHANGE ROUTE TO OTP-CHECK */}
       <CustomButton
         onPress={() =>
           isLastScreen

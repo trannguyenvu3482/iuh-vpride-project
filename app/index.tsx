@@ -1,24 +1,40 @@
 import { supabase } from "@/lib/supabase";
-import { Session } from "@supabase/supabase-js";
-import { Redirect } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useUserStore } from "@/zustand/state/userStore";
+import { Redirect, router } from "expo-router";
+import React, { useEffect } from "react";
 
 const Home = () => {
-  const [session, setSession] = useState<Session | null>(null)
+  const { setUser } = useUserStore();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+    const fetchSession = async () => {
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        console.log("Index session", session);
+
+        if (error) throw error;
+        if (session) {
+          setUser(session.user);
+          router.navigate("/(root)/(tabs)/home");
+        }
+      } catch (error: any) {
+        console.error("Error fetching session:", error.message);
+      }
+    };
+
+    fetchSession();
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
-
-  if (session) {
-    return <Redirect href="/(root)/(tabs)/home" />;
-  }
+      if (session) {
+        setUser(session.user);
+        router.navigate("/(root)/(tabs)/home");
+      }
+    });
+  }, [setUser]);
 
   return <Redirect href="/(auth)/welcome" />;
 };

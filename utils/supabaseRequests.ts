@@ -10,6 +10,7 @@ export const getUserById = async (userId: string) => {
 };
 
 export const getUserByPhone = async (phone: string) => {
+  phone = phone.replace("+", "");
   const { data: user } = await supabase
     .from("users")
     .select("*")

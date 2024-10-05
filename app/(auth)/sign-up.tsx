@@ -1,36 +1,114 @@
 import { CustomButton, OAuth, OTPInput } from "@/components";
 import { images } from "@/constants";
-import { signinWithPhone } from "@/utils/supabaseAuth";
-import { useSignUp } from "@clerk/clerk-expo";
+import { verifyOtp } from "@/utils/supabaseAuth";
+import { useMutation } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
-import ReactNativeModal from "react-native-modal";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
+
 const SignUp = () => {
   const { phone } = useGlobalSearchParams();
-  const { isLoaded, signUp, setActive } = useSignUp();
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   console.log("Phone number", phone);
 
   const [otpInput, setOtpInput] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const valid = otpInput.length === 6;
 
-  const handleVerify = async () => {
-    try {
-      const result = await signinWithPhone(phone as string);
+  const mutation = useMutation({
+    mutationFn: (otp: string) => verifyOtp(phone as string, otp),
+    onSuccess: (result) => {
+      console.log("data", result);
 
-      if (result instanceof Error) {
-        throw result; 
+      if (result.error) {
+        Toast.show({
+          type: "error",
+          text1: "Lỗi",
+          text2: result.error.message,
+        });
       } else {
-        console.log("data", result);
-        setShowSuccessModal(true);
+        Toast.show({
+          type: "success",
+          text1: "Thành công",
+          text2: "Đang chuyển hướng...",
+        });
+
+        // navigate to sign up info after 3 sec
+        setTimeout(() => {
+          router.navigate("/(root)/(tabs)/home");
+        }, 3000);
       }
-    } catch (error) {
-      console.log("error", error);
+    },
+    onError: (error) => {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Đã xảy ra lỗi trong quá trình xác thực.",
+      });
+      console.error("Error during OTP verification:", error);
+    },
+  });
+
+  const handleVerify = () => {
+    if (!valid) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Mã OTP phải có 6 ký tự.",
+      });
+      return;
     }
+
+    mutation.mutate(otpInput);
   };
+
+  // const handleVerify = async () => {
+  //   if (!valid) {
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Lỗi",
+  //       text2: "Mã OTP phải có 6 ký tự.",
+  //     });
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   try {
+  //     const result = await verifyOtp(phone as string, otpInput);
+
+  //     console.log("data", result);
+
+  //     if (result.error) {
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Lỗi",
+  //         text2: result.error.message,
+  //       });
+  //     } else {
+  //       Toast.show({
+  //         type: "success",
+  //         text1: "Thành công",
+  //         text2: "Đang chuyển hướng...",
+  //       });
+
+  //       // navigate to sign up info after 3 sec
+  //       setTimeout(() => {
+  //         router.navigate("/(root)/(tabs)/home");
+  //       }, 3000);
+  //     }
+  //   } catch (error) {
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Lỗi",
+  //       text2: "Đã xảy ra lỗi trong quá trình xác thực.",
+  //     });
+  //     console.error("Error during OTP verification:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <ScrollView className="flex-1 bg-white h-full">
@@ -42,7 +120,7 @@ const SignUp = () => {
             contentFit="cover"
           />
           <Text className="text-2xl text-black font-JakartaBold absolute bottom-0 left-5">
-            Xác thực OTP
+            Chào mừng bạn đến với VPRide
           </Text>
         </View>
         <View className="p-5 flex-1 h-full">
@@ -51,32 +129,17 @@ const SignUp = () => {
             <Text className="font-JakartaBold text-primary-500">{phone}</Text>
           </Text>
           <OTPInput otpInput={otpInput} setOtpInput={setOtpInput} />
-          <CustomButton
-            title="Xác thực"
-            onPress={handleVerify}
-            className="mt-6"
-          />
+          {mutation.isPending ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <CustomButton
+              title="Xác thực"
+              onPress={handleVerify}
+              className="mt-6"
+            />
+          )}
           <OAuth />
         </View>
-        <ReactNativeModal isVisible={showSuccessModal}>
-          <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
-            <Image
-              source={images.check}
-              className="w-[110px] h-[110px] mx-auto my-5"
-            />
-            <Text className="text-3xl font-JakartaBold text-center">
-              Chúc mừng!
-            </Text>
-            <Text className="text-base text-gray-400 font-JakartaMedium text-center mt-2">
-              Bạn đã đăng nhập thành công, hãy bắt đầu thôi
-            </Text>
-            <CustomButton
-              title="Bắt đầu thôi"
-              onPress={() => router.push(`/(root)/(tabs)/home`)}
-              className="mt-5"
-            />
-          </View>
-        </ReactNativeModal>
       </View>
       <Toast />
     </ScrollView>

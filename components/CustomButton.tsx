@@ -46,12 +46,15 @@ const CustomButton = ({
   IconLeft,
   IconRight,
   className,
+  loading,
   ...props
 }: ICustomButton) => {
   return (
     <Pressable
       style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1.0 }]}
-      className={`w-full rounded-full p-3 flex flex-row justify-center items-center shadow-md shadow-neutral-400/70 ${getBgVariantStyle(bgVariant)} ${className}`}
+      className={`w-full rounded-full p-3 flex flex-row justify-center items-center shadow-md shadow-neutral-400/70 ${getBgVariantStyle(bgVariant)} ${className} ${
+        loading ? "opacity-50" : ""
+      }`}
       onPress={onPress}
       {...props}
     >

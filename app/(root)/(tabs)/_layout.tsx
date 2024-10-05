@@ -64,7 +64,7 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="home"
+        name="history"
         options={{
           title: "History",
           headerShown: false,
@@ -74,7 +74,7 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="home"
+        name="chat"
         options={{
           title: "Chat",
           headerShown: false,
@@ -84,7 +84,7 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="home"
+        name="profile"
         options={{
           title: "Profile",
           headerShown: false,

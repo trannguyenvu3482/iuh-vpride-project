@@ -1,5 +1,7 @@
 import { CustomButton, InputField, OAuth } from "@/components";
 import { icons, images } from "@/constants";
+import { supabase } from "@/lib/supabase";
+import { useUserStore } from "@/zustand/state/userStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -33,7 +35,27 @@ const SignUpInfo = () => {
   });
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [submitDataa, setSubmitData] = useState<SignUpForm | null>(null);
+  const [submitData, setSubmitData] = useState<SignUpForm | null>(null);
+  const session = useUserStore((state) => state.session);
+
+  // TODO: Update user info
+  const updateInfo = async ({ name, email, password }: SignUpForm) => {
+    try {
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const updates = {
+        id: session.user.id,
+        full_name: name,
+        email,
+        password,
+        updated_at: new Date(),
+      };
+
+      const { error } = await supabase.from("users").upsert(updates);
+    } catch (error) {
+      console.error("Error updating user info:", error.message);
+    }
+  };
 
   const onSignUp = handleSubmit(
     (data) => {
