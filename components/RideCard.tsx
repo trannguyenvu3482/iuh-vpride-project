@@ -25,7 +25,7 @@ const RideCard = ({
         <View className="flex flex-row items-center justify-between">
           <Image
             source={{
-              uri: `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:${destination_longitude},${destination_latitude}&zoom=14&apiKey=${process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY}`,
+              uri: `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:${destination_longitude},${destination_latitude}&zoom=16&apiKey=${process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY}`,
             }}
             className="w-[80px] h-[90px] rounded-lg"
           />
@@ -47,7 +47,7 @@ const RideCard = ({
         <View className="flex flex-col w-full mt-5 bg-general-500 rounded-lg p-3 items-start justify-center">
           <View className="flex flex-row items-center w-full justify-between mb-5">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Date & Time
+              Ngày và giờ
             </Text>
             <Text className="text-md font-JakartaMedium text-gray-500">
               {formatDate(created_at)}, {formatTime(ride_time)}
@@ -55,7 +55,7 @@ const RideCard = ({
           </View>
           <View className="flex flex-row items-center w-full justify-between mb-5">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Driver
+              Tài xế
             </Text>
             <Text className="text-md font-JakartaMedium text-gray-500">
               {driver.full_name}
@@ -63,7 +63,7 @@ const RideCard = ({
           </View>
           <View className="flex flex-row items-center w-full justify-between mb-5">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Car Seats
+              Loại xe
             </Text>
             <Text className="text-md font-JakartaMedium text-gray-500">
               {driver.car_seats === 2
@@ -73,14 +73,14 @@ const RideCard = ({
           </View>
           <View className="flex flex-row items-center w-full justify-between mb-5">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Payment Status
+              Tình trạng
             </Text>
             <Text
               className={`text-md capitalize font-JakartaMedium text-gray-500 ${
                 payment_status === "paid" ? "text-green-500" : "text-red-500"
               }`}
             >
-              {payment_status === "paid" ? "Paid" : "Unpaid"}
+              {payment_status === "paid" ? "Đã thanh toán" : "Chưa thanh toán"}
             </Text>
           </View>
         </View>

@@ -18,10 +18,17 @@ import imageOnboarding2 from "../assets/images/onboarding2.png";
 import imageOnboarding3 from "../assets/images/onboarding3.png";
 import vietnamFlag from "../assets/images/vietnam-flag.png";
 import logoWithBG from "../assets/images/vpride-logo-with-bg.png";
+
+import banner1 from "../assets/images/banners/banner1.jpg";
+import banner2 from "../assets/images/banners/banner2.jpg";
+import banner3 from "../assets/images/banners/banner3.jpg";
 export const images = {
   logoWithBG,
   check,
   noResults,
+  banner1,
+  banner2,
+  banner3,
 };
 
 export const icons = {
@@ -64,4 +71,19 @@ const onboarding = [
   },
 ];
 
-export { onboarding };
+const homeSwiper = [
+  {
+    id: 1,
+    image: banner1,
+  },
+  {
+    id: 2,
+    image: banner2,
+  },
+  {
+    id: 3,
+    image: banner3,
+  },
+];
+
+export { homeSwiper, onboarding };

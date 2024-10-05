@@ -2,14 +2,16 @@ import GoogleTextInput from "@/components/GoogleTextInput";
 import Loading from "@/components/Loading";
 import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
-import { icons, images } from "@/constants";
+import { homeSwiper, icons, images } from "@/constants";
 import { useLocationStore } from "@/zustand/state/locationStore";
 import { useUserStore } from "@/zustand/state/userStore";
 import { Image } from "expo-image";
 import * as Location from "expo-location";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Swiper from "react-native-swiper";
+
 const recentRides = [
   {
     ride_id: "1",
@@ -32,7 +34,7 @@ const recentRides = [
         "https://ucarecdn.com/6ea6d83d-ef1a-483f-9106-837a3a5b3f67/-/preview/1000x666/",
       car_image_url:
         "https://ucarecdn.com/a3872f80-c094-409c-82f8-c9ff38429327/-/preview/930x932/",
-      car_seats: 4,
+      car_seats: 2,
       rating: "4.60",
     },
   },
@@ -117,6 +119,9 @@ const Home = () => {
   const loading = true;
   const { user } = useUserStore();
   const { setUserLocation, setDestinationLocation } = useLocationStore();
+  const swiperRef = useRef<Swiper>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   console.log(user);
 
   const [hasPermission, setHasPermission] = useState(false);
@@ -199,8 +204,39 @@ const Home = () => {
             />
 
             <>
+              <Swiper
+                className="w-full h-[200px] object-contain"
+                ref={swiperRef}
+                loop={false}
+                dot={
+                  <View className="w-[32px] h-[4px] mx-1 bg-[#E2E8F0] rounded-full"></View>
+                }
+                activeDot={
+                  <View className="w-[32px] h-[4px] mx-1 bg-[#0286FF] rounded-full"></View>
+                }
+                onIndexChanged={(index) => setActiveIndex(index)}
+                autoplay={true}
+                autoplayTimeout={3000}
+                autoplayDirection={true}
+              >
+                {homeSwiper.map((item) => (
+                  <View
+                    key={item.id}
+                    className="flex items-center justify-center"
+                  >
+                    <Image
+                      source={item.image}
+                      className="w-full h-[200px] object-contain"
+                      contentFit="contain"
+                    />
+                  </View>
+                ))}
+              </Swiper>
+            </>
+
+            <>
               <Text className="text-xl font-JakartaBold mt-5 mb-3">
-                Your current location
+                Vị trí hiện tại của bạn
               </Text>
               <View className="flex flex-row items-center bg-transparent h-[300px]">
                 <Map />
@@ -208,7 +244,7 @@ const Home = () => {
             </>
 
             <Text className="text-xl font-JakartaBold mt-5 mb-3">
-              Recent rides
+              Chuyến đi gần đây
             </Text>
           </>
         }

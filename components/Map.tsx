@@ -3,7 +3,7 @@ import { calculateRegion, generateMarkersFromData } from "@/lib/map";
 import { IMarkerData } from "@/types/type";
 import { useDriverStore } from "@/zustand/state/driverStore";
 import { useLocationStore } from "@/zustand/state/locationStore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 
 const drivers = [
@@ -59,6 +59,7 @@ const Map = () => {
 
   const { selectedDriver, setDrivers } = useDriverStore();
   const [markers, setMarkers] = useState<IMarkerData[]>([]);
+  const mapRef = useRef<MapView>(null);
 
   const region = calculateRegion({
     userLatitude,
@@ -68,6 +69,8 @@ const Map = () => {
   });
 
   useEffect(() => {
+    mapRef.current?.animateToRegion(region, 1000);
+
     if (Array.isArray(drivers)) {
       if (!userLatitude || !userLongitude) return;
 
@@ -91,6 +94,7 @@ const Map = () => {
       initialRegion={region}
       showsUserLocation={true}
       userInterfaceStyle="light"
+      ref={mapRef}
     >
       {markers.map((marker) => (
         <Marker
