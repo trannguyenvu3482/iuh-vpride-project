@@ -69,6 +69,7 @@ declare interface IGoogleInputProps {
   initLocation?: string;
   containerStyle?: string;
   textInputBgColor?: string;
+  hasSelectLocationButton?: boolean;
   handlePress: ({
     latitude,
     longitude,
@@ -88,11 +89,20 @@ declare interface ILocationStore {
   destinationLongitude: number;
   destinationLatitude: number;
   setUserLocation: ({
-    latitute,
+    latitude,
     longitude,
     address,
   }: {
-    latitute: number;
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => void;
+  setDestinationLocation: ({
+    latitude,
+    longitude,
+    address,
+  }: {
+    latitude: number;
     longitude: number;
     address: string;
   }) => void;
@@ -123,8 +133,7 @@ declare interface IMarkerData {
   car_image_url: string;
   car_seats: number;
   rating: number;
-  first_name: string;
-  last_name: string;
+  full_name: string;
   time?: number;
   price?: string;
 }

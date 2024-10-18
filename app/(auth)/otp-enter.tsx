@@ -102,7 +102,7 @@ const OTPEnter = () => {
           /> */}
           <PhoneInputField phoneInputRef={phoneInputRef} />
           {fetchUserMutation.isPending || sendOtpMutation.isPending ? (
-            <Loading isLoading={true} />
+            <Loading />
           ) : (
             <CustomButton
               title="Tiếp tục"

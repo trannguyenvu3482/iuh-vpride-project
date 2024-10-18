@@ -1,15 +1,22 @@
+import backArrow from "../assets/icons/back-arrow.png";
 import chat from "../assets/icons/chat.png";
 import email from "../assets/icons/email.png";
 import home from "../assets/icons/home.png";
 import list from "../assets/icons/list.png";
 import lock from "../assets/icons/lock.png";
+import map from "../assets/icons/map.png";
 import marker from "../assets/icons/marker.png";
 import out from "../assets/icons/out.png";
 import person from "../assets/icons/person.png";
 import point from "../assets/icons/point.png";
 import profile from "../assets/icons/profile.png";
 import search from "../assets/icons/search.png";
+import star from "../assets/icons/star.png";
+import target from "../assets/icons/target.png";
 import to from "../assets/icons/to.png";
+import banner1 from "../assets/images/banners/banner1.jpg";
+import banner2 from "../assets/images/banners/banner2.jpg";
+import banner3 from "../assets/images/banners/banner3.jpg";
 import check from "../assets/images/check.png";
 import googleLogo from "../assets/images/google.png";
 import noResults from "../assets/images/no-result.png";
@@ -19,9 +26,6 @@ import imageOnboarding3 from "../assets/images/onboarding3.png";
 import vietnamFlag from "../assets/images/vietnam-flag.png";
 import logoWithBG from "../assets/images/vpride-logo-with-bg.png";
 
-import banner1 from "../assets/images/banners/banner1.jpg";
-import banner2 from "../assets/images/banners/banner2.jpg";
-import banner3 from "../assets/images/banners/banner3.jpg";
 export const images = {
   logoWithBG,
   check,
@@ -46,6 +50,10 @@ export const icons = {
   out,
   search,
   marker,
+  backArrow,
+  target,
+  map,
+  star,
 };
 
 const onboarding = [

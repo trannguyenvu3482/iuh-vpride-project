@@ -4,6 +4,7 @@ import { IMarkerData } from "@/types/type";
 import { useDriverStore } from "@/zustand/state/driverStore";
 import { useLocationStore } from "@/zustand/state/locationStore";
 import React, { useEffect, useRef, useState } from "react";
+import "react-native-get-random-values";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 
 const drivers = [
