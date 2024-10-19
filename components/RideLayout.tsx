@@ -1,8 +1,5 @@
 import { icons } from "@/constants";
-import BottomSheet, {
-  BottomSheetScrollView,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useRef } from "react";
@@ -59,14 +56,14 @@ const RideLayout = ({
               {children}
             </BottomSheetView>
           ) : (
-            <BottomSheetScrollView
+            <BottomSheetView
               style={{
                 flex: 1,
                 padding: 20,
               }}
             >
               {children}
-            </BottomSheetScrollView>
+            </BottomSheetView>
           )}
         </BottomSheet>
       </View>

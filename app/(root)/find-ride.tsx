@@ -38,7 +38,7 @@ const FindRide = () => {
     setTimeout(() => {
       const randomDriver = drivers[Math.floor(Math.random() * drivers.length)];
       setSelectedDriver(randomDriver.id);
-      router.push("/(root)/book-ride");
+      router.navigate("/(root)/book-ride");
       setVisible(false);
     }, 3000);
   };
@@ -75,7 +75,7 @@ const FindRide = () => {
           </Snackbar>
         </Modal>
       </Portal>
-      <RideLayout title="Ride" snapPoints={["45%", "80%"]}>
+      <RideLayout title="Tìm xe" snapPoints={["45%", "80%"]}>
         <View className="mt-3">
           <Button onPress={() => setVisible(true)} mode="contained">
             {visible ? "Hide" : "Show"}
@@ -121,7 +121,7 @@ const FindRide = () => {
             handlePress={(location) => setDestinationLocation(location)}
           />
         </View>
-        <View className="flex-1 flex-row justify-between gap-8">
+        <View className="flex-row justify-between gap-8">
           <Text className="flex-1 text-3xl text-center font-JakartaSemiBold text-green-500 border-b-2 border-b-gray-400">
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
@@ -129,7 +129,7 @@ const FindRide = () => {
             }).format(100000)}
           </Text>
           <CustomButton
-            className="w-40"
+            className="w-40 h-14"
             title="Find now"
             onPress={handleFindRide}
           />

@@ -6,7 +6,7 @@ import { useLocationStore } from "@/zustand/state/locationStore";
 import React, { useEffect, useRef, useState } from "react";
 import "react-native-get-random-values";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
-
+import MapViewDirections from "react-native-maps-directions";
 const drivers = [
   {
     id: 1,
@@ -70,6 +70,8 @@ const Map = () => {
   });
 
   useEffect(() => {
+    // TODO: REMOVE
+    setDrivers(drivers);
     mapRef.current?.animateToRegion(region, 1000);
 
     if (Array.isArray(drivers)) {
@@ -83,7 +85,7 @@ const Map = () => {
 
       setMarkers(newMarkers);
     }
-  }, []);
+  }, [drivers, userLatitude, userLongitude]);
 
   return (
     <MapView
@@ -96,6 +98,7 @@ const Map = () => {
       showsUserLocation={true}
       userInterfaceStyle="light"
       ref={mapRef}
+      showsCompass={false}
     >
       {markers.map((marker) => (
         <Marker
@@ -108,6 +111,33 @@ const Map = () => {
           image={icons.marker}
         />
       ))}
+
+      {destinationLatitude && destinationLongitude ? (
+        <>
+          <Marker
+            key="destination"
+            coordinate={{
+              latitude: destinationLatitude,
+              longitude: destinationLongitude,
+            }}
+            title="Destination"
+            image={icons.pin}
+          />
+          <MapViewDirections
+            origin={{
+              latitude: userLatitude,
+              longitude: userLongitude,
+            }}
+            destination={{
+              latitude: destinationLatitude,
+              longitude: destinationLongitude,
+            }}
+            apikey={process.env.EXPO_PUBLIC_GOOGLE_API_KEY!}
+            strokeColor="#0286ff"
+            strokeWidth={2}
+          />
+        </>
+      ) : null}
     </MapView>
   );
 };
