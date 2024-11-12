@@ -19,7 +19,7 @@ const Home = () => {
         if (error) throw error;
         if (session) {
           setUser(session.user);
-          router.navigate("/(root)/(tabs)/home");
+          router.replace("/(root)/(tabs)/home");
         }
       } catch (error: any) {
         console.error("Error fetching session:", error.message);
@@ -31,7 +31,7 @@ const Home = () => {
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         setUser(session.user);
-        router.navigate("/(root)/(tabs)/home");
+        router.replace("/(root)/(tabs)/home");
       }
     });
   }, [setUser]);

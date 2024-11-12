@@ -4,12 +4,12 @@ import RideLayout from "@/components/RideLayout";
 import { icons } from "@/constants";
 import { useDriverStore } from "@/zustand";
 import { useLocationStore } from "@/zustand/state/locationStore";
+import axios from "axios";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 import {
   ActivityIndicator,
-  Button,
   Icon,
   Modal,
   Portal,
@@ -17,15 +17,41 @@ import {
   Snackbar,
 } from "react-native-paper";
 
+const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_KEY;
+
 const FindRide = () => {
   const {
     userAddress,
     destinationAddress,
     setDestinationLocation,
     setUserLocation,
+    userLatitude,
+    userLongitude,
+    destinationLatitude,
+    destinationLongitude,
   } = useLocationStore();
   const { drivers, setSelectedDriver } = useDriverStore();
   const [carType, setCarType] = React.useState("vpbike");
+  const [rideInfo, setRideInfo] = React.useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios("https://rsapi.goong.io/DistanceMatrix", {
+        method: "GET",
+        params: {
+          origins: `${userLatitude},${userLongitude}`,
+          destinations: `${destinationLatitude},${destinationLongitude}`,
+          vehicle: "bike",
+          api_key: GOONG_API_KEY,
+        },
+      });
+
+      console.log(response.data.rows[0].elements);
+      setRideInfo(response.data.rows[0].elements);
+    };
+
+    fetchData();
+  }, []);
 
   const handleFindRide = () => {
     setVisible(true);
@@ -77,9 +103,6 @@ const FindRide = () => {
       </Portal>
       <RideLayout title="Tìm xe" snapPoints={["45%", "80%"]}>
         <View className="mt-3">
-          <Button onPress={() => setVisible(true)} mode="contained">
-            {visible ? "Hide" : "Show"}
-          </Button>
           <SegmentedButtons
             density="small"
             style={{ marginBottom: 10 }}
@@ -126,7 +149,7 @@ const FindRide = () => {
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-            }).format(100000)}
+            }).format(52500)}
           </Text>
           <CustomButton
             className="w-40 h-14"

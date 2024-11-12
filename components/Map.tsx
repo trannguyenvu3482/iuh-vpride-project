@@ -134,7 +134,7 @@ const Map = () => {
             }}
             apikey={process.env.EXPO_PUBLIC_GOOGLE_API_KEY!}
             strokeColor="#0286ff"
-            strokeWidth={2}
+            strokeWidth={3}
           />
         </>
       ) : null}

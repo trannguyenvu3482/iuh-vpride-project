@@ -4,6 +4,10 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { DefaultTheme, PaperProvider } from "react-native-paper";
+
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs();
+
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();

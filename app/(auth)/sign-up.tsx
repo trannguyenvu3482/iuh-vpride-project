@@ -36,7 +36,7 @@ const SignUp = () => {
 
         // navigate to sign up info after 3 sec
         setTimeout(() => {
-          router.navigate("/(root)/(tabs)/home");
+          router.replace("/(root)/(tabs)/home");
         }, 3000);
       }
     },

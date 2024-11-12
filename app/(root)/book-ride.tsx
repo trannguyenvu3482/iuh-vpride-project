@@ -4,7 +4,7 @@ import { icons } from "@/constants";
 import { formatTime } from "@/lib/utils";
 import { useDriverStore, useLocationStore } from "@/zustand";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Image, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Icon, MD3Colors, ProgressBar } from "react-native-paper";
@@ -33,7 +33,7 @@ const BookRide = () => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(interval);
-          Alert.alert("Timeout", "It took too long to progress.");
+          Alert.alert("Đã hết hạn", "Bạn mất quá lâu để thanh toán.");
 
           router.back();
           return 0;
@@ -53,8 +53,12 @@ const BookRide = () => {
     (driver) => +driver.id === selectedDriver,
   )[0];
 
+  const handleBookRide = () => {
+    router.push("/(root)/confirm-ride");
+  };
+
   return (
-    <RideLayout title="Book Ride">
+    <RideLayout title="Xác nhận chuyến đi">
       <>
         <ProgressBar
           style={{
@@ -162,7 +166,11 @@ const BookRide = () => {
             }}
           />
 
-          <CustomButton className="w-40" title="Book ngay" onPress={() => {}} />
+          <CustomButton
+            className="w-40"
+            title="Book ngay"
+            onPress={handleBookRide}
+          />
         </View>
       </>
     </RideLayout>
