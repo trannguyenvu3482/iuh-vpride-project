@@ -2,18 +2,23 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "deno.enablePaths": ["/supabase/functions"],
+  "deno.enablePaths": [
+    "/supabase/functions"
+  ],
   "deno.lint": true,
   "deno.enable": true,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
   "tailwindCSS.experimental.classRegex": [
-      ["tva\\((([^()]*|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    [
+      "tva\\((([^()]*|\\([^()]*\\))*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ]
   ]
 }
