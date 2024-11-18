@@ -1,6 +1,6 @@
 import { icons } from "@/constants";
 import { Image } from "expo-image";
-import { Tabs } from "expo-router";
+import { Tabs, useSegments } from "expo-router";
 import React from "react";
 import { ImageSourcePropType, View } from "react-native";
 
@@ -30,6 +30,10 @@ const TabBarIcon = ({
 };
 
 const Layout = () => {
+  const segments = useSegments();
+
+  console.log(segments);
+
   return (
     <Tabs
       initialRouteName="home"
@@ -45,8 +49,8 @@ const Layout = () => {
           marginHorizontal: 20,
           marginBottom: 20,
           height: 78,
-          display: "flex",
-          justifyContent: "space-between",
+          display: `${segments[3] === "[id]" ? "none" : "flex"}`,
+          justifyContent: "space-around",
           alignItems: "center",
           flexDirection: "row",
           position: "absolute",

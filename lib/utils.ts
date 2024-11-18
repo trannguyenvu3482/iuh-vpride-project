@@ -18,3 +18,10 @@ export function formatTime(minutes: number): string {
     return `${hours} giờ ${remainingMinutes} phút`;
   }
 }
+
+export const truncateText = (text: string, maxLength: number) => {
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + "...";
+  }
+  return text;
+};
