@@ -34,7 +34,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Cho phép $(PRODUCT_NAME) sử dụng vị trí của bạn."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
