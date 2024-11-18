@@ -69,6 +69,8 @@ const Map = () => {
     destinationLongitude,
   });
 
+  console.log(">>> REGION", region);
+
   useEffect(() => {
     // TODO: REMOVE
     setDrivers(drivers);
@@ -92,25 +94,27 @@ const Map = () => {
       provider={PROVIDER_DEFAULT}
       className="w-full h-full rounded-2xl"
       tintColor="black"
-      mapType="mutedStandard"
-      showsPointsOfInterest={false}
+      mapType="standard"
       initialRegion={region}
       showsUserLocation={true}
       userInterfaceStyle="light"
       ref={mapRef}
-      showsCompass={false}
+      showsMyLocationButton={true}
     >
-      {markers.map((marker) => (
-        <Marker
-          key={marker.id}
-          coordinate={{
-            latitude: marker.latitude,
-            longitude: marker.longitude,
-          }}
-          title={marker.title}
-          image={icons.marker}
-        />
-      ))}
+      {markers.map((marker) => {
+        console.log(marker);
+        return (
+          <Marker
+            key={marker.id}
+            coordinate={{
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            }}
+            title={marker.title}
+            image={icons.marker}
+          />
+        );
+      })}
 
       {destinationLatitude && destinationLongitude ? (
         <>

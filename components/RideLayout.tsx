@@ -22,9 +22,9 @@ const RideLayout = ({
     <GestureHandlerRootView className="flex-1">
       <View className="flex-1 bg-white">
         <View className="flex flex-col h-screen bg-blue-500">
-          <View className="flex flex-row absolute z-10 top-16 items-center justify-start px-5">
+          <View className="flex flex-row absolute z-10 top-8 items-center justify-start px-5">
             <TouchableOpacity onPress={() => router.back()}>
-              <View className="w-10 h-10 bg-white rounded-full items-center justify-center">
+              <View className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-500">
                 <Image
                   source={icons.backArrow}
                   contentFit="contain"
@@ -32,7 +32,7 @@ const RideLayout = ({
                 />
               </View>
             </TouchableOpacity>
-            <Text className="text-xl font-JakartaSemiBold ml-5">
+            <Text className="text-xl font-JakartaSemiBold ml-3">
               {title || "Go Back"}
             </Text>
           </View>

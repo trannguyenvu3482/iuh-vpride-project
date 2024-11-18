@@ -38,18 +38,18 @@ const Layout = () => {
         tabBarInactiveTintColor: "white",
         tabBarShowLabel: false,
         tabBarStyle: {
-          borderRadius: 40,
-          marginHorizontal: 20,
           backgroundColor: "#333333",
+          borderRadius: 50,
+          paddingBottom: 0, // ios only
           overflow: "hidden",
+          marginHorizontal: 20,
+          marginBottom: 20,
+          height: 78,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexDirection: "row",
           position: "absolute",
-          paddingBottom: 50,
-          paddingTop: 20,
-          bottom: 20,
         },
       }}
     >

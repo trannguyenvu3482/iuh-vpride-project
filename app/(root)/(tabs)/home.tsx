@@ -49,8 +49,6 @@ const Home = () => {
   const swiperRef = useRef<Swiper>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  console.log(user);
-
   const [hasPermission, setHasPermission] = useState(false);
 
   const handleSignOut = () => {
@@ -85,10 +83,12 @@ const Home = () => {
           longitude: location.coords.longitude,
         });
 
+        console.log(">>> LOCATION", address);
+
         setUserLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          address: `${address[0].name}, ${address[0].region}`,
+          address: `${address[0].formattedAddress}`,
         });
       } catch (error) {
         console.error("Error getting location:", error);
@@ -143,7 +143,7 @@ const Home = () => {
             />
 
             <Swiper
-              className="w-full h-[200px] "
+              className="w-full h-[200px] object-contain"
               ref={swiperRef}
               dot={
                 <View className="w-[32px] h-[4px] mx-1 bg-[#E2E8F0] rounded-full"></View>
@@ -152,6 +152,7 @@ const Home = () => {
                 <View className="w-[32px] h-[4px] mx-1 bg-[#0286FF] rounded-full"></View>
               }
               onIndexChanged={(index) => setActiveIndex(index)}
+              loop={false}
             >
               {homeSwiper.map((item) => (
                 <View
