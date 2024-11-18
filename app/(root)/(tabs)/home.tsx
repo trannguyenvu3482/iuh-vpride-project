@@ -143,9 +143,8 @@ const Home = () => {
             />
 
             <Swiper
-              className="w-full h-[200px] object-contain"
+              className="w-full h-[200px] "
               ref={swiperRef}
-              loop={false}
               dot={
                 <View className="w-[32px] h-[4px] mx-1 bg-[#E2E8F0] rounded-full"></View>
               }

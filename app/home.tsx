@@ -1,10 +1,11 @@
 import { supabase } from "@/lib/supabase";
 import { useUserStore } from "@/zustand/state/userStore";
-import { Redirect, router } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 
 const Home = () => {
   const { setUser } = useUserStore();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSession = async () => {
