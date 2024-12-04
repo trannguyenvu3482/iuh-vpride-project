@@ -1,12 +1,15 @@
 import { CustomButton } from "@/components";
 import GoogleTextInput from "@/components/GoogleTextInput";
+import Loading from "@/components/Loading";
 import RideLayout from "@/components/RideLayout";
 import { icons } from "@/constants";
+import { calculateTotalPrice, formatTime, getRandomDriver } from "@/lib/utils";
+import { Database } from "@/types/database";
 import { useDriverStore } from "@/zustand";
 import { useLocationStore } from "@/zustand/state/locationStore";
 import axios from "axios";
 import { router } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import {
   ActivityIndicator,
@@ -29,29 +32,61 @@ const FindRide = () => {
     userLongitude,
     destinationLatitude,
     destinationLongitude,
+    setDistance,
+    setDuration,
+    setPrice,
+    duration,
+    distance,
+    price,
   } = useLocationStore();
   const { drivers, setSelectedDriver } = useDriverStore();
-  const [carType, setCarType] = React.useState("vpbike");
-  const [rideInfo, setRideInfo] = React.useState({});
+  const [carType, setCarType] =
+    useState<Database["public"]["Enums"]["VehicleType"]>("VPBIKE");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios("https://rsapi.goong.io/DistanceMatrix", {
-        method: "GET",
-        params: {
-          origins: `${userLatitude},${userLongitude}`,
-          destinations: `${destinationLatitude},${destinationLongitude}`,
-          vehicle: "bike",
-          api_key: GOONG_API_KEY,
-        },
-      });
+      setLoading(true);
+      try {
+        const response = await axios("https://rsapi.goong.io/DistanceMatrix", {
+          method: "GET",
+          params: {
+            origins: `${userLatitude},${userLongitude}`,
+            destinations: `${destinationLatitude},${destinationLongitude}`,
+            vehicle: carType === "VPBIKE" ? "bike" : "car",
+            api_key: GOONG_API_KEY,
+          },
+        });
 
-      console.log(response.data.rows[0].elements);
-      setRideInfo(response.data.rows[0].elements);
+        console.log("RESPONSE", response);
+
+        const info = response.data.rows[0].elements[0];
+
+        const price = calculateTotalPrice(info.distance.value, carType);
+
+        console.log("DURATION", info.duration);
+
+        // setRideInfo(response.data.rows[0].elements);
+        setDuration(info.duration.value);
+        setDistance(info.distance.value);
+        setPrice(price);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+      setLoading(false);
     };
 
     fetchData();
-  }, []);
+  }, [
+    carType,
+    destinationLatitude,
+    destinationLongitude,
+    setDistance,
+    setDuration,
+    setPrice,
+    userLatitude,
+    userLongitude,
+  ]);
 
   const handleFindRide = () => {
     setVisible(true);
@@ -62,9 +97,9 @@ const FindRide = () => {
     }
 
     setTimeout(() => {
-      const randomDriver = drivers[Math.floor(Math.random() * drivers.length)];
+      const randomDriver = getRandomDriver(drivers, carType);
       setSelectedDriver(randomDriver.id);
-      router.navigate("/(root)/book-ride");
+      router.push("/(root)/book-ride");
       setVisible(false);
     }, 3000);
   };
@@ -72,7 +107,9 @@ const FindRide = () => {
 
   const hideModal = () => setVisible(false);
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <>
       <Portal>
         <Modal visible={visible} onDismiss={hideModal} dismissable={false}>
@@ -101,25 +138,27 @@ const FindRide = () => {
           </Snackbar>
         </Modal>
       </Portal>
-      <RideLayout title="Tìm xe" snapPoints={["45%", "80%"]}>
+      <RideLayout title="Tìm xe" snapPoints={["50%", "37%", "12%"]}>
         <View className="mt-3">
           <SegmentedButtons
             density="small"
             style={{ marginBottom: 10 }}
             value={carType}
-            onValueChange={setCarType}
+            onValueChange={(value) =>
+              setCarType(value as Database["public"]["Enums"]["VehicleType"])
+            }
             buttons={[
               {
                 icon: "motorbike",
-                value: "vpbike",
+                value: "VPBIKE",
                 label: "VPBike",
               },
               {
                 icon: "car-hatchback",
-                value: "vpcar4",
+                value: "VPCAR4",
                 label: "VPCar 4",
               },
-              { icon: "car-estate", value: "vpcar7", label: "VPCar 7" },
+              { icon: "car-estate", value: "VPCAR7", label: "VPCar 7" },
             ]}
           />
           <Text className="text-lg font-JakartaSemiBold mb-3">
@@ -135,7 +174,10 @@ const FindRide = () => {
           />
         </View>
         <View className="mb-3">
-          <Text className="text-lg font-JakartaSemiBold mb-3">Điểm đến</Text>
+          <Text className="text-lg font-JakartaSemiBold mb-3">
+            Điểm đến - {Math.round((distance / 1000) * 10) / 10} km -{" "}
+            {formatTime(Math.round(duration / 60))}
+          </Text>
           <GoogleTextInput
             icon={icons.map}
             initLocation={destinationAddress}
@@ -145,11 +187,11 @@ const FindRide = () => {
           />
         </View>
         <View className="flex-row justify-between gap-8">
-          <Text className="flex-1 text-3xl text-center font-JakartaSemiBold text-green-500 border-b-2 border-b-gray-400">
+          <Text className="flex-1 text-[26px] text-center font-JakartaSemiBold text-green-500 border-b-2 border-b-gray-400">
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-            }).format(52500)}
+            }).format(price)}
           </Text>
           <CustomButton
             className="w-40 h-14"

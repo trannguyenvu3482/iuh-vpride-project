@@ -16,9 +16,11 @@ const Chat = () => {
   const [searchContact, setSearchContact] = useState<string>("");
 
   return (
-    <SafeAreaView className=" my-5 bg-gray-200">
+    <SafeAreaView className="py-5 bg-gray-200">
       <View className="px-5">
-        <Text className="text-2xl font-JakartaExtraBold">Chat</Text>
+        <Text className="text-2xl font-JakartaExtraBold">
+          Danh sách tin nhắn
+        </Text>
 
         <InputField
           className="py-3"

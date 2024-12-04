@@ -51,7 +51,7 @@ declare interface IRide {
   created_at: string;
   driver: {
     full_name: string;
-    car_seats: number;
+    vehicle_type: string;
   };
 }
 
@@ -60,7 +60,7 @@ declare interface IDriver {
   full_name: string;
   profile_image_url: string;
   car_image_url: string;
-  car_seats: number;
+  vehicle_type: string;
   rating: number;
 }
 
@@ -88,6 +88,9 @@ declare interface ILocationStore {
   destinationAddress: string;
   destinationLongitude: number;
   destinationLatitude: number;
+  distance: number;
+  duration: number;
+  price: number;
   setUserLocation: ({
     latitude,
     longitude,
@@ -106,21 +109,31 @@ declare interface ILocationStore {
     longitude: number;
     address: string;
   }) => void;
+  setDistance: (distance: number) => void;
+  setDuration: (duration: number) => void;
+  setPrice: (price: number) => void;
 }
 
 declare interface IUserStore {
-  user: User | null;
+  user: any;
+  userData: any;
   session: Session | null;
-  setUser: (user: User | null) => void;
+  isRiding: boolean;
+  setUser: (user: any) => void;
+  setUserData: (userData: any) => void;
   setSession: (session: Session | null) => void;
   refreshSession: () => Promise<any>;
+  setIsRiding: (isRiding: boolean) => void;
 }
 
 declare interface IDriverStore {
-  drivers: IMarkerData[];
-  selectedDriver: number | null;
-  setSelectedDriver: (driverId: number) => void;
-  setDrivers: (drivers: IMarkerData[]) => void;
+  drivers: Database["public"]["Tables"]["drivers"]["Row"][];
+  selectedDriver: string | null;
+  fetchDrivers: () => void;
+  setSelectedDriver: (driverId: string) => void;
+  setDrivers: (
+    drivers: Database["public"]["Tables"]["drivers"]["Row"][],
+  ) => void;
   clearSelectedDriver: () => void;
 }
 
@@ -131,7 +144,7 @@ declare interface IMarkerData {
   title: string;
   profile_image_url: string;
   car_image_url: string;
-  car_seats: number;
+  vehicle_type: string;
   rating: number;
   full_name: string;
   time?: number;

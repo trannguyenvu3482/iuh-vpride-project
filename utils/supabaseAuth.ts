@@ -14,9 +14,6 @@ export const verifyOtp = async (
   phone: string,
   otp: string,
 ): Promise<AuthResponse> => {
-  console.log("phone", phone);
-  console.log("otp", otp);
-
   const response: AuthResponse = await supabase.auth.verifyOtp({
     phone,
     token: otp,

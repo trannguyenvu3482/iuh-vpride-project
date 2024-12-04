@@ -8,8 +8,11 @@ export const useUserStore = create<IUserStore>()(
   persist(
     (set) => ({
       user: null,
+      userData: null,
       session: null,
+      isRiding: false,
       setUser: (user) => set({ user }),
+      setUserData: (userData) => set({ userData }),
       setSession: (session) => set({ session }),
       refreshSession: async () => {
         const {
@@ -21,6 +24,7 @@ export const useUserStore = create<IUserStore>()(
           set(() => ({ user: null }));
         }
       },
+      setIsRiding: (isRiding) => set({ isRiding }),
     }),
     {
       name: "user-store",

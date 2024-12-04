@@ -4,89 +4,232 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Json[];
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+          extensions?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
-      transactions: {
+      drivers: {
         Row: {
-          amount: number
-          created_at: string
-          id: number
-          status: Database["public"]["Enums"]["vnpayresponsestatus"] | null
-          transaction_code: string | null
-          user_id: string | null
-        }
+          car_image_url: string | null;
+          createdAt: string | null;
+          full_name: string;
+          id: string;
+          phone_number: string;
+          profile_image_url: string;
+          ratings: number;
+          status: Database["public"]["Enums"]["driverStatus"] | null;
+          totalEarning: number;
+          totalRides: number;
+          vehicle_color: string;
+          vehicle_name: string;
+          vehicle_type: Database["public"]["Enums"]["VehicleType"];
+        };
         Insert: {
-          amount?: number
-          created_at?: string
-          id?: number
-          status?: Database["public"]["Enums"]["vnpayresponsestatus"] | null
-          transaction_code?: string | null
-          user_id?: string | null
-        }
+          car_image_url?: string | null;
+          createdAt?: string | null;
+          full_name: string;
+          id?: string;
+          phone_number: string;
+          profile_image_url?: string;
+          ratings?: number;
+          status?: Database["public"]["Enums"]["driverStatus"] | null;
+          totalEarning?: number;
+          totalRides?: number;
+          vehicle_color: string;
+          vehicle_name: string;
+          vehicle_type?: Database["public"]["Enums"]["VehicleType"];
+        };
         Update: {
-          amount?: number
-          created_at?: string
-          id?: number
-          status?: Database["public"]["Enums"]["vnpayresponsestatus"] | null
-          transaction_code?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      users: {
+          car_image_url?: string | null;
+          createdAt?: string | null;
+          full_name?: string;
+          id?: string;
+          phone_number?: string;
+          profile_image_url?: string;
+          ratings?: number;
+          status?: Database["public"]["Enums"]["driverStatus"] | null;
+          totalEarning?: number;
+          totalRides?: number;
+          vehicle_color?: string;
+          vehicle_name?: string;
+          vehicle_type?: Database["public"]["Enums"]["VehicleType"];
+        };
+        Relationships: [];
+      };
+      rides: {
         Row: {
-          full_name: string | null
-          id: string
-          phone_number: string | null
-          updated_at: string | null
-        }
+          created_at: string;
+          destination_address: string;
+          destination_latitude: number;
+          destination_longitude: number;
+          driver_id: string | null;
+          id: string;
+          payment_status: string;
+          price: number;
+          ride_time: number;
+          start_address: string;
+          start_latitude: number;
+          start_longitude: number;
+          status: string | null;
+          user_id: string;
+        };
         Insert: {
-          full_name?: string | null
-          id: string
-          phone_number?: string | null
-          updated_at?: string | null
-        }
+          created_at?: string;
+          destination_address?: string;
+          destination_latitude?: number;
+          destination_longitude?: number;
+          driver_id?: string | null;
+          id?: string;
+          payment_status: string;
+          price?: number;
+          ride_time?: number;
+          start_address?: string;
+          start_latitude?: number;
+          start_longitude?: number;
+          status?: string | null;
+          user_id: string;
+        };
         Update: {
-          full_name?: string | null
-          id?: string
-          phone_number?: string | null
-          updated_at?: string | null
-        }
+          created_at?: string;
+          destination_address?: string;
+          destination_latitude?: number;
+          destination_longitude?: number;
+          driver_id?: string | null;
+          id?: string;
+          payment_status?: string;
+          price?: number;
+          ride_time?: number;
+          start_address?: string;
+          start_latitude?: number;
+          start_longitude?: number;
+          status?: string | null;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: "rides_driver_id_fkey";
+            columns: ["driver_id"];
+            isOneToOne: false;
+            referencedRelation: "drivers";
+            referencedColumns: ["id"];
           },
-        ]
-      }
-    }
+          {
+            foreignKeyName: "rides_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      transactions: {
+        Row: {
+          amount: number;
+          created_at: string;
+          id: number;
+          status: Database["public"]["Enums"]["vnpayresponsestatus"] | null;
+          transaction_code: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          amount?: number;
+          created_at?: string;
+          id?: number;
+          status?: Database["public"]["Enums"]["vnpayresponsestatus"] | null;
+          transaction_code?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          id?: number;
+          status?: Database["public"]["Enums"]["vnpayresponsestatus"] | null;
+          transaction_code?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
+      users: {
+        Row: {
+          createdAt: string | null;
+          email: string | null;
+          full_name: string | null;
+          id: string;
+          phone_number: string | null;
+          status: Database["public"]["Enums"]["userStatus"] | null;
+          totalRides: number | null;
+        };
+        Insert: {
+          createdAt?: string | null;
+          email?: string | null;
+          full_name?: string | null;
+          id: string;
+          phone_number?: string | null;
+          status?: Database["public"]["Enums"]["userStatus"] | null;
+          totalRides?: number | null;
+        };
+        Update: {
+          createdAt?: string | null;
+          email?: string | null;
+          full_name?: string | null;
+          id?: string;
+          phone_number?: string | null;
+          status?: Database["public"]["Enums"]["userStatus"] | null;
+          totalRides?: number | null;
+        };
+        Relationships: [];
+      };
+    };
     Views: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     Functions: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     Enums: {
+      driverStatus: "ACTIVE" | "INACTIVE";
+      userStatus: "CREATED" | "AUTHENTICATED" | "DELETED";
+      VehicleType: "VPBIKE" | "VPCAR4" | "VPCAR7";
       vnpayresponsestatus:
         | "CANCELLED_BY_USER"
         | "INSUFFICIENT_BALANCE"
         | "TRANSACTION_TIMEOUT"
         | "SUCCESS"
-        | "PENDING"
-    }
+        | "PENDING";
+    };
     CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-}
+      [_ in never]: never;
+    };
+  };
+};
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type PublicSchema = Database[Extract<keyof Database, "public">];
 
 export type Tables<
   PublicTableNameOrOptions extends
@@ -99,7 +242,7 @@ export type Tables<
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
+      Row: infer R;
     }
     ? R
     : never
@@ -107,11 +250,11 @@ export type Tables<
         PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
+        Row: infer R;
       }
       ? R
       : never
-    : never
+    : never;
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
@@ -122,17 +265,17 @@ export type TablesInsert<
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
+      Insert: infer I;
     }
     ? I
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I
+        Insert: infer I;
       }
       ? I
       : never
-    : never
+    : never;
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
@@ -143,17 +286,17 @@ export type TablesUpdate<
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
+      Update: infer U;
     }
     ? U
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U
+        Update: infer U;
       }
       ? U
       : never
-    : never
+    : never;
 
 export type Enums<
   PublicEnumNameOrOptions extends
@@ -166,4 +309,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database;
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never;
