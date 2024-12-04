@@ -1,11 +1,20 @@
 import { Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { CustomButton } from "@/components";
 import InputField from "@/components/InputField";
+import { supabase } from "@/lib/supabase";
 import { useUserStore } from "@/zustand";
+import { router } from "expo-router";
 
 const Profile = () => {
-  const { user, userData } = useUserStore();
+  const { user, userData, resetUser } = useUserStore();
+
+  const handleSignOut = () => {
+    supabase.auth.signOut();
+    resetUser();
+    router.replace("/(auth)/otp-enter");
+  };
 
   return (
     <SafeAreaView className="flex-1 w-full">
@@ -48,6 +57,12 @@ const Profile = () => {
             containerStyle="w-full"
             inputStyle="p-3.5"
             editable={false}
+          />
+
+          <CustomButton
+            className="w-full mt-3"
+            title="Đăng xuất"
+            onPress={handleSignOut}
           />
         </View>
       </ScrollView>

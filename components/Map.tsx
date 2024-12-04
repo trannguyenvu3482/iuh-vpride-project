@@ -1,5 +1,6 @@
 import { icons } from "@/constants";
 import { calculateRegion, generateMarkersFromData } from "@/lib/map";
+import { getRandomItems } from "@/lib/utils";
 import { IMarkerData } from "@/types/type";
 import { useDriverStore } from "@/zustand/state/driverStore";
 import { useLocationStore } from "@/zustand/state/locationStore";
@@ -33,7 +34,7 @@ const Map = () => {
       if (!userLatitude || !userLongitude) return;
 
       const newMarkers = generateMarkersFromData({
-        data: drivers,
+        data: getRandomItems(drivers, 5),
         userLatitude,
         userLongitude,
       });

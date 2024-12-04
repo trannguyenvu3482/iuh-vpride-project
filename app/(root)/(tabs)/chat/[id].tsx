@@ -1,13 +1,13 @@
 import ReplyMessageBar from "@/components/ReplyMessageBar";
-import { dummyChatContacts } from "@/constants";
 import messageData from "@/constants/messages.json";
+import { supabase } from "@/lib/supabase";
+import { useUserStore } from "@/zustand";
 import "dayjs/locale/vi";
 import { ImageBackground } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import {
-  Avatar,
   Bubble,
   GiftedChat,
   InputToolbar,
@@ -18,13 +18,12 @@ import { Icon, MD3Colors } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ChatDetail = () => {
-  const { id } = useLocalSearchParams();
-
-  const user = dummyChatContacts.find((item) => item.id === id);
+  const { id: chatId } = useLocalSearchParams();
 
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
   const insets = useSafeAreaInsets();
+  const { userData } = useUserStore();
 
   const [replyMessage, setReplyMessage] = useState<any>(null);
 
@@ -38,7 +37,6 @@ const ChatDetail = () => {
           user: {
             _id: message.from,
             name: message.from ? "You" : "Bob",
-            avatar: "https://robohash.org/a",
           },
         };
       }),
@@ -55,16 +53,101 @@ const ChatDetail = () => {
     ]);
   }, []);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages),
-    );
-  }, []);
+  // Fetch initial messages
+
+  // const onSend = useCallback((messages = []) => {
+  //   console.log(">>> messages", messages);
+
+  //   setMessages((previousMessages) =>
+  //     GiftedChat.append(previousMessages, messages),
+  //   );
+  // }, []);
+
+  // Listen for new messages
+
+  useEffect(() => {
+    // Fetch initial messages
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("id, content, created_at, user_id, users(full_name)")
+        .eq("chat_id", userData?.id)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching messages:", error);
+        return;
+      }
+
+      // Transform messages to GiftedChat format
+      const formattedMessages = data.map((msg) => ({
+        _id: msg.id,
+        text: msg.content,
+        createdAt: msg?.created_at ? new Date(msg.created_at) : new Date(),
+        user: {
+          _id: msg.user_id,
+          name: msg?.users?.full_name,
+        },
+      }));
+
+      setMessages(formattedMessages);
+    };
+
+    fetchMessages();
+
+    // Subscribe to new messages
+    const channel = supabase
+      .channel("custom-insert-channel")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          const newMessage = {
+            _id: payload.new.id,
+            text: payload.new.content,
+            createdAt: new Date(payload.new.created_at),
+            user: {
+              _id: payload.new.user_id,
+              name: payload.new.users?.name || "Unknown",
+              avatar: payload.new.users?.avatar_url || "",
+            },
+          };
+          setMessages((prevMessages) =>
+            GiftedChat.append(prevMessages, [newMessage]),
+          );
+        },
+      )
+      .subscribe();
+
+    // Cleanup subscription on component unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userData?.id]);
+
+  // Handle sending messages
+  const onSend = useCallback(
+    async (newMessages = []) => {
+      const [message] = newMessages;
+      const { text } = message;
+
+      const { error } = await supabase.from("messages").insert({
+        chat_id: Array.isArray(chatId) ? chatId[0] : chatId,
+        user_id: userData?.id,
+        content: text,
+      });
+
+      if (error) {
+        console.error("Error sending message:", error);
+      }
+    },
+    [chatId, userData?.id],
+  );
 
   return (
     <ImageBackground
       source={{
-        uri: "https://images.unsplash.com/photo-1541256181278-02c7e14f2a8e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        uri: "https://images.unsplash.com/photo-1563291074-2bf8677ac0e5?q=80&w=1907&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       }}
       style={{
         flex: 1,
@@ -106,32 +189,18 @@ const ChatDetail = () => {
           </View>
         )}
         bottomOffset={insets.bottom}
-        showUserAvatar={true}
+        showUserAvatar={false}
         maxComposerHeight={100}
         maxInputLength={100}
         textInputProps={styles.composer}
-        renderAvatar={(props) => {
-          return (
-            <Avatar
-              {...props}
-              imageStyle={{
-                left: {
-                  backgroundColor: "#fff",
-                },
-                right: {
-                  backgroundColor: "#444AFD",
-                },
-              }}
-            />
-          );
-        }}
+        renderAvatar={null}
         renderBubble={(props) => {
           return (
             <Bubble
               {...props}
               textStyle={{
                 right: {
-                  color: "#000",
+                  color: "#fff",
                   fontSize: 14,
                   fontFamily: "Jakarta-SemiBold",
                 },
@@ -197,13 +266,13 @@ const ChatDetail = () => {
           />
         )}
         onLongPress={(context, message) => setReplyMessage(message)}
-        // renderMessage={(props) => (
-        //   <ChatMessageBox
-        //     {...props}
-        //     setReplyOnSwipeOpen={setReplyMessage}
-        //     updateRowRef={updateRowRef}
-        //   />
-        // )}
+      // renderMessage={(props) => (
+      //   <ChatMessageBox
+      //     {...props}
+      //     setReplyOnSwipeOpen={setReplyMessage}
+      //     updateRowRef={updateRowRef}
+      //   />
+      // )}
       />
     </ImageBackground>
   );

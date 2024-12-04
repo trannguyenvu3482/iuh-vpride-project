@@ -47,7 +47,7 @@ const GoogleTextInput = ({
         setUserLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          address: `${data.results[0].address}`,
+          address: `${data.results[0].formatted_address}`,
         });
       } catch (error) {
         console.error("Error getting location:", error);
@@ -59,7 +59,7 @@ const GoogleTextInput = ({
 
   return (
     <View
-      className={`flex flex-row items-center justify-center relative z-50 rounded-xl ${containerStyle} mb-5`}
+      className={`flex flex-row items-center justify-center relative z-50 rounded-xl ${containerStyle} mb-5 shadow-md border border-gray-300 font-JakartaMedium`}
     >
       <GooglePlacesAutocomplete
         fetchDetails={true}
@@ -80,6 +80,7 @@ const GoogleTextInput = ({
             fontWeight: "600",
             width: "100%",
             borderRadius: 200,
+            fontFamily: "Jakarta-Bold",
           },
           listView: {
             backgroundColor: textInputBgColor || "white",
@@ -89,6 +90,10 @@ const GoogleTextInput = ({
             borderRadius: 10,
             shadowColor: "#d4d4d4",
             zIndex: 99,
+            fontFamily: "Jakarta-Medium",
+          },
+          description: {
+            fontFamily: "Jakarta-SemiBold",
           },
         }}
         onPress={(data, details = null) => {

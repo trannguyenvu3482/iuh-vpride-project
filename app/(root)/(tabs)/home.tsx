@@ -5,6 +5,8 @@ import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
 import { homeSwiper, icons, images } from "@/constants";
 import { supabase } from "@/lib/supabase";
+import { getHello } from "@/lib/utils";
+import { Database } from "@/types/database";
 import { useLocationStore } from "@/zustand/state/locationStore";
 import { useUserStore } from "@/zustand/state/userStore";
 import axios from "axios";
@@ -16,48 +18,51 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
 
-const recentRides = [
-  {
-    ride_id: "1",
-    start_address: "Công Viên Hoàng Văn Thụ",
-    destination_address: "Sân vận động Thống Nhất",
-    start_latitude: "10.7727094",
-    start_longitude: "106.6607663",
-    destination_latitude: "10.7601807",
-    destination_longitude: "106.6603973",
-    ride_time: 21,
-    price: "19500.00",
-    payment_status: "paid",
-    driver_id: 2,
-    user_id: "1",
-    created_at: "2024-08-12 05:19:20.620007",
-    driver: {
-      driver_id: "2",
-      full_name: "David Nộp",
-      profile_image_url:
-        "https://ucarecdn.com/6ea6d83d-ef1a-483f-9106-837a3a5b3f67/-/preview/1000x666/",
-      car_image_url:
-        "https://ucarecdn.com/a3872f80-c094-409c-82f8-c9ff38429327/-/preview/930x932/",
-      car_seats: 2,
-      rating: "4.60",
-    },
-  },
-];
+// const recentRides = [
+//   {
+//     ride_id: "1",
+//     start_address: "Công Viên Hoàng Văn Thụ",
+//     destination_address: "Sân vận động Thống Nhất",
+//     start_latitude: "10.7727094",
+//     start_longitude: "106.6607663",
+//     destination_latitude: "10.7601807",
+//     destination_longitude: "106.6603973",
+//     ride_time: 21,
+//     price: "19500.00",
+//     payment_status: "paid",
+//     driver_id: 2,
+//     user_id: "1",
+//     created_at: "2024-08-12 05:19:20.620007",
+//     driver: {
+//       driver_id: "2",
+//       full_name: "David Nộp",
+//       profile_image_url:
+//         "https://ucarecdn.com/6ea6d83d-ef1a-483f-9106-837a3a5b3f67/-/preview/1000x666/",
+//       car_image_url:
+//         "https://ucarecdn.com/a3872f80-c094-409c-82f8-c9ff38429327/-/preview/930x932/",
+//       car_seats: 2,
+//       rating: "4.60",
+//     },
+//   },
+// ];
 
 const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_KEY;
 
 const Home = () => {
   const loading = true;
-  const { user, setUser, setUserData, isRiding } = useUserStore();
+  const { user, resetUser, setUserData, isRiding, userData } = useUserStore();
   const { setUserLocation, setDestinationLocation } = useLocationStore();
   const swiperRef = useRef<Swiper>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const [hasPermission, setHasPermission] = useState(false);
+  const [recentRides, setRecentRides] = useState<
+    Database["public"]["Tables"]["rides"]["Row"][]
+  >([]);
 
   const handleSignOut = () => {
     supabase.auth.signOut();
-    setUser(null);
+    resetUser();
     router.push("/(auth)/otp-enter");
   };
   const handleDestinationPress = (location: {
@@ -70,6 +75,7 @@ const Home = () => {
     router.push("/(root)/find-ride");
   };
 
+  // Get location
   useEffect(() => {
     const requestLocationPermission = async () => {
       try {
@@ -96,11 +102,11 @@ const Home = () => {
           },
         });
 
-        console.log(">>> address", data.results[0].address);
+        console.log(">>> address", data.results[0]);
         setUserLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          address: `${data.results[0].address}`,
+          address: `${data.results[0].formatted_address}`,
         });
       } catch (error) {
         console.error("Error getting location:", error);
@@ -110,6 +116,7 @@ const Home = () => {
     requestLocationPermission();
   }, [setUserLocation]);
 
+  // Get User
   useEffect(() => {
     const fetchData = async () => {
       let { data: users, error } = await supabase
@@ -124,6 +131,34 @@ const Home = () => {
 
     fetchData();
   }, [setUserData, user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let { data: rides, error } = await supabase
+          .from("rides")
+          .select(
+            `
+            *,
+            drivers (
+              full_name,
+              vehicle_type
+            )`,
+          )
+          .eq("user_id", user?.id);
+
+        if (rides && rides.length > 0) {
+          setRecentRides(rides);
+
+          console.log(">>> RIDES", rides);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [user?.id]);
 
   return (
     <SafeAreaView className="bg-general-500">
@@ -152,8 +187,10 @@ const Home = () => {
         ListHeaderComponent={
           <>
             <View className="flex flex-row items-center justify-between my-5">
-              <Text className="text-xl font-JakartaExtraBold">
-                Chào buổi sáng, {user?.phone}
+              <Text className="text-lg font-JakartaExtraBold">
+                {isRiding
+                  ? "Chúc bạn có một chuyến đi vui vẻ"
+                  : getHello(userData?.full_name)}
               </Text>
               <TouchableOpacity
                 className="justify-center items-center w-10 h-10 rounded-full bg-white shadow-sm shadow-neutral-300"
