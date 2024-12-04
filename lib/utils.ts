@@ -12,10 +12,10 @@ export function formatTime(minutes: number): string {
   const formattedMinutes = +minutes?.toFixed(0) || 0;
 
   if (formattedMinutes < 60) {
-    return `${minutes} phút`;
+    return `${Math.round(formattedMinutes)} phút`;
   } else {
     const hours = Math.floor(formattedMinutes / 60);
-    const remainingMinutes = formattedMinutes % 60;
+    const remainingMinutes = Math.round(formattedMinutes % 60);
     return `${hours} giờ ${remainingMinutes} phút`;
   }
 }
@@ -91,4 +91,32 @@ export const getRandomDriver = (
     filteredDrivers[Math.floor(Math.random() * filteredDrivers.length)];
 
   return randomDriver;
+};
+
+export const getHello = (name: string) => {
+  let now = new Date();
+
+  let isMorning = now.getHours() > 5 && now.getHours() <= 12;
+  let isAfternoon = now.getHours() > 12 && now.getHours() <= 18;
+  let isEvening = now.getHours() > 18 && now.getHours() <= 22;
+  let isNight = now.getHours() > 22 || now.getHours() <= 5;
+
+  if (isMorning) {
+    return `Chào buổi sáng, ${name}!`;
+  } else if (isAfternoon) {
+    return `Buổi chiều vui vẻ, ${name}!`;
+  } else if (isEvening) {
+    return `Chào buổi tối, ${name}!`;
+  } else if (isNight) {
+    return `Cẩn thận khi đi buổi đêm nhé, ${name}!`;
+  } else {
+    return `Chào, ${name}!`;
+  }
+};
+
+export const getRandomItems = (arr: any[], count: number) => {
+  // Shuffle the array
+  const shuffled = arr.sort(() => 0.5 - Math.random());
+  // Return the first `count` items
+  return shuffled.slice(0, count);
 };

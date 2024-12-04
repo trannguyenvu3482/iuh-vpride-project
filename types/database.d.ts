@@ -34,6 +34,63 @@ export type Database = {
   };
   public: {
     Tables: {
+      chat_participants: {
+        Row: {
+          chat_id: string | null;
+          id: string;
+          joined_at: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          chat_id?: string | null;
+          id?: string;
+          joined_at?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          chat_id?: string | null;
+          id?: string;
+          joined_at?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chat_participants_chat_id_fkey";
+            columns: ["chat_id"];
+            isOneToOne: false;
+            referencedRelation: "chats";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chat_participants_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      chats: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          is_group: boolean | null;
+          name: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          is_group?: boolean | null;
+          name?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          is_group?: boolean | null;
+          name?: string | null;
+        };
+        Relationships: [];
+      };
       drivers: {
         Row: {
           car_image_url: string | null;
@@ -82,21 +139,59 @@ export type Database = {
         };
         Relationships: [];
       };
+      messages: {
+        Row: {
+          chat_id: string | null;
+          content: string;
+          created_at: string | null;
+          id: string;
+          user_id: string | null;
+        };
+        Insert: {
+          chat_id?: string | null;
+          content: string;
+          created_at?: string | null;
+          id?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          chat_id?: string | null;
+          content?: string;
+          created_at?: string | null;
+          id?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "messages_chat_id_fkey";
+            columns: ["chat_id"];
+            isOneToOne: false;
+            referencedRelation: "chats";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       rides: {
         Row: {
           created_at: string;
           destination_address: string;
           destination_latitude: number;
           destination_longitude: number;
-          driver_id: string | null;
+          driver_id: string;
           id: string;
-          payment_status: string;
           price: number;
           ride_time: number;
           start_address: string;
           start_latitude: number;
           start_longitude: number;
-          status: string | null;
+          status: Database["public"]["Enums"]["rideStatus"];
           user_id: string;
         };
         Insert: {
@@ -104,15 +199,14 @@ export type Database = {
           destination_address?: string;
           destination_latitude?: number;
           destination_longitude?: number;
-          driver_id?: string | null;
+          driver_id: string;
           id?: string;
-          payment_status: string;
           price?: number;
           ride_time?: number;
           start_address?: string;
           start_latitude?: number;
           start_longitude?: number;
-          status?: string | null;
+          status?: Database["public"]["Enums"]["rideStatus"];
           user_id: string;
         };
         Update: {
@@ -120,15 +214,14 @@ export type Database = {
           destination_address?: string;
           destination_latitude?: number;
           destination_longitude?: number;
-          driver_id?: string | null;
+          driver_id?: string;
           id?: string;
-          payment_status?: string;
           price?: number;
           ride_time?: number;
           start_address?: string;
           start_latitude?: number;
           start_longitude?: number;
-          status?: string | null;
+          status?: Database["public"]["Enums"]["rideStatus"];
           user_id?: string;
         };
         Relationships: [
@@ -214,6 +307,7 @@ export type Database = {
     };
     Enums: {
       driverStatus: "ACTIVE" | "INACTIVE";
+      rideStatus: "CREATED" | "GOING" | "FINISHED" | "CANCELLED";
       userStatus: "CREATED" | "AUTHENTICATED" | "DELETED";
       VehicleType: "VPBIKE" | "VPCAR4" | "VPCAR7";
       vnpayresponsestatus:

@@ -124,6 +124,7 @@ declare interface IUserStore {
   setSession: (session: Session | null) => void;
   refreshSession: () => Promise<any>;
   setIsRiding: (isRiding: boolean) => void;
+  resetUser: () => void;
 }
 
 declare interface IDriverStore {

@@ -25,6 +25,14 @@ export const useUserStore = create<IUserStore>()(
         }
       },
       setIsRiding: (isRiding) => set({ isRiding }),
+      resetUser: () => {
+        set(() => ({
+          user: null,
+          userData: null,
+          session: null,
+          isRiding: false,
+        }));
+      },
     }),
     {
       name: "user-store",

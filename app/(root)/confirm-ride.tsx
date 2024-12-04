@@ -65,7 +65,7 @@ const ConfirmRide = () => {
         console.log(error);
       }
     } catch (error) {
-      console.log(e);
+      console.log(error);
     }
     setLoading(false);
   };
@@ -94,7 +94,7 @@ const ConfirmRide = () => {
               Thời lượng: {formatTime(Math.round(duration / 60))}
             </Text>
             <Text className="font-JakartaBold text-base">
-              Quãng đường: {Math.round(distance / 1000)} km
+              Quãng đường: {Math.round((distance / 1000) * 10) / 10} km
             </Text>
             <Text className="font-JakartaBold text-base">
               Giá:{" "}
