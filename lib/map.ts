@@ -1,4 +1,4 @@
-import { IDriver, IMarkerData } from "@/types/type";
+import { IMarkerData } from "@/types/type";
 
 export const calculateRegion = ({
   userLatitude,
@@ -101,7 +101,7 @@ export const generateMarkersFromData = ({
   userLatitude,
   userLongitude,
 }: {
-  data: IDriver[];
+  data: any[];
   userLatitude: number;
   userLongitude: number;
 }): IMarkerData[] => {

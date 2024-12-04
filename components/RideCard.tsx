@@ -66,9 +66,9 @@ const RideCard = ({
               Loại xe
             </Text>
             <Text className="text-md font-JakartaMedium text-gray-500">
-              {driver.car_seats === 2
+              {driver.vehicle_type === "VPBIKE"
                 ? "VPBike"
-                : `VPCar ${driver.car_seats} chỗ`}
+                : `VPCar ${driver.vehicle_type === "VPCAR4" ? "4" : "7"} chỗ`}
             </Text>
           </View>
           <View className="flex flex-row items-center w-full justify-between mb-5">

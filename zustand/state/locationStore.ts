@@ -8,6 +8,9 @@ export const useLocationStore = create<ILocationStore>((set) => ({
   destinationAddress: "",
   destinationLongitude: 0,
   destinationLatitude: 0,
+  distance: 0,
+  duration: 0,
+  price: 0,
   setUserLocation: ({
     latitude,
     longitude,
@@ -36,6 +39,31 @@ export const useLocationStore = create<ILocationStore>((set) => ({
       destinationAddress: address,
       destinationLongitude: longitude,
       destinationLatitude: latitude,
+    }));
+  },
+  setDistance: (distance: number) => {
+    set(() => ({
+      distance,
+    }));
+  },
+  setDuration: (duration: number) => {
+    set(() => ({
+      duration,
+    }));
+  },
+  setPrice: (price: number) => {
+    set(() => ({
+      price,
+    }));
+  },
+  resetLocation: () => {
+    set(() => ({
+      destinationAddress: "",
+      destinationLongitude: 0,
+      destinationLatitude: 0,
+      distance: 0,
+      duration: 0,
+      price: 0,
     }));
   },
 }));

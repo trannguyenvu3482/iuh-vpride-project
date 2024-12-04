@@ -1,6 +1,7 @@
 import { icons } from "@/constants";
 import { IGoogleInputProps } from "@/types/type";
 import { useLocationStore } from "@/zustand/state/locationStore";
+import axios from "axios";
 import { Image } from "expo-image";
 import * as Location from "expo-location";
 import React from "react";
@@ -9,6 +10,7 @@ import "react-native-get-random-values";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 const googlePlacesApiKey = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
+const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_KEY;
 
 const GoogleTextInput = ({
   icon,
@@ -30,15 +32,22 @@ const GoogleTextInput = ({
 
         let location = await Location.getCurrentPositionAsync({});
 
-        const address = await Location.reverseGeocodeAsync({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+        // const address = await Location.reverseGeocodeAsync({
+        //   latitude: location.coords.latitude,
+        //   longitude: location.coords.longitude,
+        // });
+
+        const { data } = await axios.get("https://rsapi.goong.io/Geocode", {
+          params: {
+            api_key: GOONG_API_KEY,
+            latlng: `${location.coords.latitude},${location.coords.longitude}`,
+          },
         });
 
         setUserLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          address: `${address[0].formattedAddress}`,
+          address: `${data.results[0].address}`,
         });
       } catch (error) {
         console.error("Error getting location:", error);

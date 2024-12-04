@@ -85,6 +85,15 @@ const onboarding = [
 
 const dummyChatContacts = [
   {
+    id: "1",
+    name: "Trợ lý VPRide",
+    date: "2024-11-18T08:30:00Z",
+    img: "https://robohash.org/a",
+    lastMessage: "Bạn cần giúp đỡ?",
+    seen: false,
+    verified: true,
+  },
+  {
     id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     name: "Nguyễn Văn An",
     date: "2024-11-18T08:30:00Z",
@@ -301,4 +310,4 @@ const homeSwiper = [
   },
 ];
 
-export { homeSwiper, onboarding };
+export { dummyChatContacts, homeSwiper, onboarding };

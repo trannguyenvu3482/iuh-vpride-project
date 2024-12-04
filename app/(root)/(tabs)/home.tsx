@@ -1,3 +1,4 @@
+import { CustomButton } from "@/components";
 import GoogleTextInput from "@/components/GoogleTextInput";
 import Loading from "@/components/Loading";
 import Map from "@/components/Map";
@@ -6,6 +7,7 @@ import { homeSwiper, icons, images } from "@/constants";
 import { supabase } from "@/lib/supabase";
 import { useLocationStore } from "@/zustand/state/locationStore";
 import { useUserStore } from "@/zustand/state/userStore";
+import axios from "axios";
 import { Image } from "expo-image";
 import * as Location from "expo-location";
 import { router } from "expo-router";
@@ -42,9 +44,11 @@ const recentRides = [
   },
 ];
 
+const GOONG_API_KEY = process.env.EXPO_PUBLIC_GOONG_KEY;
+
 const Home = () => {
   const loading = true;
-  const { user, setUser } = useUserStore();
+  const { user, setUser, setUserData, isRiding } = useUserStore();
   const { setUserLocation, setDestinationLocation } = useLocationStore();
   const swiperRef = useRef<Swiper>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -73,22 +77,30 @@ const Home = () => {
 
         if (status !== "granted") {
           setHasPermission(false);
+          console.log("No permission");
+
           return;
         }
 
-        let location = await Location.getCurrentPositionAsync({});
+        const location = await Location.getCurrentPositionAsync({});
 
-        const address = await Location.reverseGeocodeAsync({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+        // const address = await Location.reverseGeocodeAsync({
+        //   latitude: location.coords.latitude,
+        //   longitude: location.coords.longitude,
+        // });
+
+        const { data } = await axios.get("https://rsapi.goong.io/Geocode", {
+          params: {
+            api_key: GOONG_API_KEY,
+            latlng: `${location.coords.latitude},${location.coords.longitude}`,
+          },
         });
 
-        console.log(">>> LOCATION", address);
-
+        console.log(">>> address", data.results[0].address);
         setUserLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          address: `${address[0].formattedAddress}`,
+          address: `${data.results[0].address}`,
         });
       } catch (error) {
         console.error("Error getting location:", error);
@@ -96,7 +108,22 @@ const Home = () => {
     };
 
     requestLocationPermission();
-  }, []);
+  }, [setUserLocation]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let { data: users, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user?.id);
+
+      if (users && users.length > 0) {
+        setUserData(users[0]);
+      }
+    };
+
+    fetchData();
+  }, [setUserData, user]);
 
   return (
     <SafeAreaView className="bg-general-500">
@@ -136,11 +163,22 @@ const Home = () => {
               </TouchableOpacity>
             </View>
 
-            <GoogleTextInput
-              icon={icons.search}
-              containerStyle="bg-white shadow-md shadow-neutral-300"
-              handlePress={handleDestinationPress}
-            />
+            {isRiding ? (
+              <CustomButton
+                title="Xem chuyến đi hiện tại"
+                onPress={() => {
+                  router.navigate("/(root)/confirm-ride");
+                }}
+                className="w-full mb-6"
+                bgVariant="primary"
+              />
+            ) : (
+              <GoogleTextInput
+                icon={icons.search}
+                containerStyle="bg-white shadow-md shadow-neutral-300"
+                handlePress={handleDestinationPress}
+              />
+            )}
 
             <Swiper
               className="w-full h-[200px] object-contain"
@@ -161,13 +199,12 @@ const Home = () => {
                 >
                   <Image
                     source={item.image}
-                    className="w-full h-[200px] object-contain"
+                    className="w-full h-[200px]"
                     contentFit="contain"
                   />
                 </View>
               ))}
             </Swiper>
-
             <>
               <Text className="text-xl font-JakartaBold mt-5 mb-3">
                 Vị trí hiện tại của bạn
@@ -176,7 +213,6 @@ const Home = () => {
                 <Map />
               </View>
             </>
-
             <Text className="text-xl font-JakartaBold mt-5 mb-3">
               Chuyến đi gần đây
             </Text>
