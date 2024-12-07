@@ -1,11 +1,12 @@
+import ChatHeader from "@/components/ChatHeader";
+import Loading from "@/components/Loading";
 import ReplyMessageBar from "@/components/ReplyMessageBar";
-import messageData from "@/constants/messages.json";
-import { supabase } from "@/lib/supabase";
+import { fetchChatMessages, sendMessage } from "@/lib/chat";
 import { useUserStore } from "@/zustand";
 import "dayjs/locale/vi";
 import { ImageBackground } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import {
   Bubble,
@@ -18,7 +19,7 @@ import { Icon, MD3Colors } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ChatDetail = () => {
-  const { id: chatId } = useLocalSearchParams();
+  const { id: chatId }: { id: string } = useLocalSearchParams();
 
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
@@ -26,123 +27,34 @@ const ChatDetail = () => {
   const { userData } = useUserStore();
 
   const [replyMessage, setReplyMessage] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch messages when the component mounts
   useEffect(() => {
-    setMessages([
-      ...messageData.map((message) => {
-        return {
-          _id: message.id,
-          text: message.msg,
-          createdAt: new Date(message.date),
-          user: {
-            _id: message.from,
-            name: message.from ? "You" : "Bob",
-          },
-        };
-      }),
-      {
-        _id: 0,
-        system: true,
-        text: "Bạn đã lướt hết tin nhắn rồi.",
-        createdAt: new Date(),
-        user: {
-          _id: 0,
-          name: "Bot",
-        },
-      },
-    ]);
-  }, []);
-
-  // Fetch initial messages
-
-  // const onSend = useCallback((messages = []) => {
-  //   console.log(">>> messages", messages);
-
-  //   setMessages((previousMessages) =>
-  //     GiftedChat.append(previousMessages, messages),
-  //   );
-  // }, []);
-
-  // Listen for new messages
-
-  useEffect(() => {
-    // Fetch initial messages
-    const fetchMessages = async () => {
-      const { data, error } = await supabase
-        .from("messages")
-        .select("id, content, created_at, user_id, users(full_name)")
-        .eq("chat_id", userData?.id)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching messages:", error);
-        return;
-      }
-
-      // Transform messages to GiftedChat format
-      const formattedMessages = data.map((msg) => ({
-        _id: msg.id,
-        text: msg.content,
-        createdAt: msg?.created_at ? new Date(msg.created_at) : new Date(),
-        user: {
-          _id: msg.user_id,
-          name: msg?.users?.full_name,
-        },
-      }));
-
-      setMessages(formattedMessages);
+    const loadMessages = async () => {
+      setLoading(true);
+      const fetchedMessages = await fetchChatMessages(chatId);
+      setMessages(fetchedMessages);
+      setLoading(false);
     };
 
-    fetchMessages();
+    loadMessages();
+  }, [chatId]);
 
-    // Subscribe to new messages
-    const channel = supabase
-      .channel("custom-insert-channel")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          const newMessage = {
-            _id: payload.new.id,
-            text: payload.new.content,
-            createdAt: new Date(payload.new.created_at),
-            user: {
-              _id: payload.new.user_id,
-              name: payload.new.users?.name || "Unknown",
-              avatar: payload.new.users?.avatar_url || "",
-            },
-          };
-          setMessages((prevMessages) =>
-            GiftedChat.append(prevMessages, [newMessage]),
-          );
-        },
-      )
-      .subscribe();
+  // Handle sending a message
+  const handleSend = async (newMessages: any[] = []) => {
+    setLoading(true);
+    const [message] = newMessages; // GiftedChat sends an array of new messages
 
-    // Cleanup subscription on component unmount
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userData?.id]);
+    const sentMessage = await sendMessage(chatId, userData?.id, message?.text);
 
-  // Handle sending messages
-  const onSend = useCallback(
-    async (newMessages = []) => {
-      const [message] = newMessages;
-      const { text } = message;
-
-      const { error } = await supabase.from("messages").insert({
-        chat_id: Array.isArray(chatId) ? chatId[0] : chatId,
-        user_id: userData?.id,
-        content: text,
-      });
-
-      if (error) {
-        console.error("Error sending message:", error);
-      }
-    },
-    [chatId, userData?.id],
-  );
+    if (sentMessage) {
+      setMessages((prevMessages) =>
+        GiftedChat.append(prevMessages, [sentMessage]),
+      );
+    }
+    setLoading(false);
+  };
 
   return (
     <ImageBackground
@@ -154,126 +66,131 @@ const ChatDetail = () => {
         marginBottom: insets.bottom,
       }}
     >
-      <GiftedChat
-        messages={messages}
-        onSend={(messages: any) => onSend(messages)}
-        onInputTextChanged={setText}
-        user={{
-          _id: 1,
-        }}
-        renderSystemMessage={(props) => (
-          <SystemMessage
-            {...props}
-            textStyle={{ color: "#333", fontSize: 14 }}
-          />
-        )}
-        placeholder="Nhập tin nhắn..."
-        locale={"vi"}
-        infiniteScroll={true}
-        loadEarlier={true}
-        scrollToBottom={true}
-        onPress={(context: any, message: any) => {
-          console.log(message);
-          context.actionSheet();
-        }}
-        scrollToBottomComponent={() => (
-          <View
-            style={{
-              height: 44,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Icon source="chevron-down" color="#000" size={28} />
-          </View>
-        )}
-        bottomOffset={insets.bottom}
-        showUserAvatar={false}
-        maxComposerHeight={100}
-        maxInputLength={100}
-        textInputProps={styles.composer}
-        renderAvatar={null}
-        renderBubble={(props) => {
-          return (
-            <Bubble
+      <ChatHeader id={chatId} />
+      {loading ? (
+        <Loading />
+      ) : (
+        <GiftedChat
+          messages={messages}
+          onSend={(newMessages) => handleSend(newMessages)}
+          onInputTextChanged={setText}
+          user={{
+            _id: userData?.id,
+          }}
+          renderSystemMessage={(props) => (
+            <SystemMessage
               {...props}
-              textStyle={{
-                right: {
-                  color: "#fff",
-                  fontSize: 14,
-                  fontFamily: "Jakarta-SemiBold",
-                },
-                left: {
-                  color: "#000",
-                  fontSize: 14,
-                  fontFamily: "Jakarta-SemiBold",
-                },
-              }}
-              wrapperStyle={{
-                left: {
-                  backgroundColor: "#fff",
-                },
-                right: {
-                  backgroundColor: "#444AFD",
-                },
-              }}
+              textStyle={{ color: "#333", fontSize: 14 }}
             />
-          );
-        }}
-        renderSend={(props) => (
-          <View
-            style={{
-              height: 44,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 14,
-              paddingHorizontal: 14,
-            }}
-          >
-            {text === "" && (
-              <>
-                <Icon
-                  source="camera-outline"
-                  color={MD3Colors.primary60}
-                  size={28}
-                />
-                <Icon
-                  source="microphone"
-                  color={MD3Colors.primary60}
-                  size={28}
-                />
-              </>
-            )}
-            {text !== "" && (
-              <Send
+          )}
+          placeholder="Nhập tin nhắn..."
+          locale={"vi"}
+          infiniteScroll={true}
+          loadEarlier={true}
+          scrollToBottom={true}
+          onPress={(context: any, message: any) => {
+            console.log(message);
+            context.actionSheet();
+          }}
+          scrollToBottomComponent={() => (
+            <View
+              style={{
+                height: 44,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Icon source="chevron-down" color="#000" size={28} />
+            </View>
+          )}
+          bottomOffset={insets.bottom}
+          showUserAvatar={false}
+          maxComposerHeight={100}
+          maxInputLength={100}
+          textInputProps={styles.composer}
+          renderAvatar={null}
+          renderBubble={(props) => {
+            return (
+              <Bubble
                 {...props}
-                containerStyle={{
-                  justifyContent: "center",
+                textStyle={{
+                  right: {
+                    color: "#fff",
+                    fontSize: 14,
+                    fontFamily: "Jakarta-SemiBold",
+                  },
+                  left: {
+                    color: "#000",
+                    fontSize: 14,
+                    fontFamily: "Jakarta-SemiBold",
+                  },
                 }}
-              >
-                <Icon source="send" color={MD3Colors.primary60} size={28} />
-              </Send>
-            )}
-          </View>
-        )}
-        renderInputToolbar={renderInputToolbar}
-        renderChatFooter={() => (
-          <ReplyMessageBar
-            clearReply={() => setReplyMessage(null)}
-            message={replyMessage}
-          />
-        )}
-        onLongPress={(context, message) => setReplyMessage(message)}
-      // renderMessage={(props) => (
-      //   <ChatMessageBox
-      //     {...props}
-      //     setReplyOnSwipeOpen={setReplyMessage}
-      //     updateRowRef={updateRowRef}
-      //   />
-      // )}
-      />
+                wrapperStyle={{
+                  left: {
+                    backgroundColor: "#fff",
+                  },
+                  right: {
+                    backgroundColor: "#444AFD",
+                  },
+                }}
+              />
+            );
+          }}
+          renderSend={(props) => (
+            <View
+              style={{
+                height: 44,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 14,
+                paddingHorizontal: 14,
+              }}
+            >
+              {text === "" && (
+                <>
+                  <Icon
+                    source="camera-outline"
+                    color={MD3Colors.primary60}
+                    size={28}
+                  />
+                  <Icon
+                    source="microphone"
+                    color={MD3Colors.primary60}
+                    size={28}
+                  />
+                </>
+              )}
+              {text !== "" && (
+                <Send
+                  {...props}
+                  containerStyle={{
+                    justifyContent: "center",
+                  }}
+                >
+                  <Icon source="send" color={MD3Colors.primary60} size={28} />
+                </Send>
+              )}
+            </View>
+          )}
+          renderInputToolbar={renderInputToolbar}
+          renderChatFooter={() => (
+            <ReplyMessageBar
+              clearReply={() => setReplyMessage(null)}
+              message={replyMessage}
+            />
+          )}
+          onLongPress={(context, message) => setReplyMessage(message)}
+          // renderMessage={(props) => (
+          //   <ChatMessageBox
+          //     {...props}
+          //     setReplyOnSwipeOpen={setReplyMessage}
+          //     updateRowRef={updateRowRef}
+          //   />
+          // )}
+        />
+      )}
     </ImageBackground>
   );
 };

@@ -218,7 +218,7 @@ const Home = () => {
             )}
 
             <Swiper
-              className="w-full h-[200px] object-contain"
+              className="w-full h-[200px] object-contain rounded-xl"
               ref={swiperRef}
               dot={
                 <View className="w-[32px] h-[4px] mx-1 bg-[#E2E8F0] rounded-full"></View>
@@ -232,11 +232,11 @@ const Home = () => {
               {homeSwiper.map((item) => (
                 <View
                   key={item.id}
-                  className="flex items-center justify-center"
+                  className="flex items-center justify-center rounded-xl"
                 >
                   <Image
                     source={item.image}
-                    className="w-full h-[200px]"
+                    className="w-full h-[200px] rounded-xl"
                     contentFit="contain"
                   />
                 </View>

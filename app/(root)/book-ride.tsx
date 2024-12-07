@@ -3,14 +3,16 @@ import RideLayout from "@/components/RideLayout";
 import { icons, images } from "@/constants";
 import { formatTime } from "@/lib/utils";
 import { useDriverStore, useLocationStore, useUserStore } from "@/zustand";
+import axios from "axios";
 import { router } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
 import { Alert, Image, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import ReactNativeModal from "react-native-modal";
 import { Icon, MD3Colors, ProgressBar } from "react-native-paper";
 
-const INIT_TIME = 60; // Init: 60 seconds
+const INIT_TIME = 120; // Init: 60 seconds
 
 const BookRide = () => {
   const { userAddress, destinationAddress, price, duration } =
@@ -24,11 +26,6 @@ const BookRide = () => {
   const [items, setItems] = useState([
     { label: "Tiền mặt", value: "cash", icon: () => <Text>💰</Text> },
     { label: "VNPay", value: "vnpay", icon: () => <Text>💳</Text> },
-    {
-      label: "Ví Momo",
-      value: "momo",
-      icon: () => <Image source={icons.momo} className="w-5 h-5" />,
-    },
   ]);
   const [success, setSuccess] = useState(false);
 
@@ -57,7 +54,20 @@ const BookRide = () => {
     (driver) => driver.id === selectedDriver,
   )[0];
 
-  const handleBookRide = () => {};
+  const handleBookRide = async () => {
+    console.log(value);
+    if (value === "vnpay") {
+      const { data } = await axios.get(
+        "https://ztqgqlskroyusdafhcca.supabase.co/functions/v1/handle-transaction",
+      );
+
+      console.log(data);
+      let result = await WebBrowser.openBrowserAsync(data.url);
+      console.log(result);
+    } else {
+      setSuccess(true);
+    }
+  };
 
   return (
     <RideLayout title="Xác nhận chuyến đi" snapPoints={["50%", "50%"]}>
@@ -83,7 +93,7 @@ const BookRide = () => {
           />
 
           <View className="flex flex-row items-center justify-center mt-5 space-x-2">
-            <Text className="text-lg font-JakartaSemiBold">
+            <Text className="text-lg font-JakartaBold">
               {driverDetails?.title || driverDetails.full_name}
             </Text>
 
@@ -102,8 +112,8 @@ const BookRide = () => {
 
         <View className="flex flex-col w-full items-start justify-center py-3 px-5 rounded-3xl bg-general-600 mt-5">
           <View className="flex flex-row items-center justify-between w-full border-b border-white py-3">
-            <Text className="text-lg font-JakartaRegular">Giá</Text>
-            <Text className="text-lg font-JakartaRegular text-[#0CC25F]">
+            <Text className="text-lg font-JakartaMedium">Giá</Text>
+            <Text className="text-lg font-JakartaBold text-[#0CC25F]">
               {new Intl.NumberFormat("vi-VN", {
                 style: "currency",
                 currency: "VND",
@@ -112,23 +122,23 @@ const BookRide = () => {
           </View>
 
           <View className="flex flex-row items-center justify-between w-full border-b border-white py-3">
-            <Text className="text-lg font-JakartaRegular">Thời gian đón</Text>
-            <Text className="text-lg font-JakartaRegular">
+            <Text className="text-lg font-JakartaMedium">Tổng thời lượng</Text>
+            <Text className="text-lg font-JakartaBold">
               {formatTime(Math.round(duration / 60))}
             </Text>
           </View>
 
           <View className="flex flex-row items-center justify-between w-full py-3">
-            <Text className="text-lg font-JakartaRegular">Loại xe</Text>
+            <Text className="text-lg font-JakartaMedium">Loại xe</Text>
             <View className="flex flex-row items-end gap-2">
-              <Text className="text-lg font-JakartaRegular ">
+              <Text className="text-lg font-JakartaMedium ">
                 {driverDetails?.vehicle_type === "VPBIKE" ? (
                   <Icon source="motorbike" color="blue" size={24} />
                 ) : (
                   <Icon source="car-hatchback" color="blue" size={24} />
                 )}
               </Text>
-              <Text className="text-lg font-JakartaRegular">
+              <Text className="text-lg font-JakartaBold">
                 {driverDetails?.vehicle_type === "VPBIKE"
                   ? "VPBike"
                   : `VPCar ${
@@ -142,14 +152,12 @@ const BookRide = () => {
         <View className="flex flex-col w-full items-start justify-center mt-5">
           <View className="flex flex-row items-center justify-start mt-3 border-t border-b border-general-700 w-full py-3">
             <Image source={icons.to} className="w-6 h-6" />
-            <Text className="text-lg font-JakartaRegular ml-2">
-              {userAddress}
-            </Text>
+            <Text className="text-lg font-JakartaBold mx-2">{userAddress}</Text>
           </View>
 
           <View className="flex flex-row items-center justify-start border-b border-general-700 w-full py-3">
             <Image source={icons.point} className="w-6 h-6" />
-            <Text className="text-lg font-JakartaRegular ml-2">
+            <Text className="text-lg font-JakartaBold mx-2">
               {destinationAddress}
             </Text>
           </View>
@@ -176,7 +184,7 @@ const BookRide = () => {
           <CustomButton
             className="w-40"
             title="Book ngay"
-            onPress={() => setSuccess(true)}
+            onPress={() => handleBookRide()}
           />
         </View>
       </>

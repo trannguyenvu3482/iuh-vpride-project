@@ -2,6 +2,7 @@ import { CustomButton } from "@/components";
 import Loading from "@/components/Loading";
 import RideLayout from "@/components/RideLayout";
 import { icons } from "@/constants";
+import { createChat } from "@/lib/chat";
 import { supabase } from "@/lib/supabase";
 import { formatTime } from "@/lib/utils";
 import { useDriverStore, useUserStore } from "@/zustand";
@@ -54,6 +55,10 @@ const ConfirmRide = () => {
         .insert([ride])
         .select();
 
+      const chat = await createChat(userData?.id, selectedDriver);
+
+      console.log(chat);
+
       if (data && data.length > 0) {
         clearSelectedDriver();
         resetLocation();
@@ -74,7 +79,7 @@ const ConfirmRide = () => {
     <Loading />
   ) : (
     <>
-      <RideLayout title="Tìm xe" snapPoints={["10%", "65%"]}>
+      <RideLayout title="Tìm xe" snapPoints={["10%", "70%"]}>
         <Text className="text-xl font-JakartaSemiBold mb-3">
           Thông tin chuyến đi
         </Text>

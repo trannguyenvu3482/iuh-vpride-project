@@ -1,4 +1,4 @@
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { CustomButton } from "@/components";
@@ -6,14 +6,26 @@ import InputField from "@/components/InputField";
 import { supabase } from "@/lib/supabase";
 import { useUserStore } from "@/zustand";
 import { router } from "expo-router";
+import { useState } from "react";
+import { Icon } from "react-native-paper";
 
 const Profile = () => {
   const { user, userData, resetUser } = useUserStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [data, setData] = useState<any>({
+    full_name: userData?.full_name,
+    email: userData?.email,
+    phone_number: userData?.phone_number,
+  });
 
   const handleSignOut = () => {
     supabase.auth.signOut();
     resetUser();
     router.replace("/(auth)/otp-enter");
+  };
+
+  const handleEdit = () => {
+    setIsEditing(!isEditing);
   };
 
   return (
@@ -22,7 +34,16 @@ const Profile = () => {
         className="px-5 w-full flex-1"
         contentContainerStyle={{ paddingBottom: 120 }}
       >
-        <Text className="text-2xl font-JakartaBold my-5">My profile</Text>
+        <View className="flex flex-row justify-between items-center">
+          <Text className="text-2xl font-JakartaBold my-5">My profile</Text>
+          <TouchableOpacity onPress={handleEdit}>
+            <Icon
+              source={isEditing ? "content-save" : "application-edit-outline"}
+              color={isEditing ? "green" : "black"}
+              size={24}
+            />
+          </TouchableOpacity>
+        </View>
 
         <View className="flex items-center justify-center my-5">
           <Image
@@ -40,7 +61,9 @@ const Profile = () => {
             placeholder={userData?.full_name || "Không tìm thấy"}
             containerStyle="w-full"
             inputStyle="p-3.5"
-            editable={false}
+            editable={isEditing}
+            value=""
+            onChangeText={() => { }}
           />
 
           <InputField
@@ -48,7 +71,7 @@ const Profile = () => {
             placeholder={userData?.email || "Không tìm thấy"}
             containerStyle="w-full"
             inputStyle="p-3.5"
-            editable={false}
+            editable={isEditing}
           />
 
           <InputField
@@ -56,7 +79,7 @@ const Profile = () => {
             placeholder={userData?.phone_number || "Không tìm thấy"}
             containerStyle="w-full"
             inputStyle="p-3.5"
-            editable={false}
+            editable={isEditing}
           />
 
           <CustomButton

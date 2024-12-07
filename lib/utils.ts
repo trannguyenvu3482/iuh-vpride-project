@@ -120,3 +120,7 @@ export const getRandomItems = (arr: any[], count: number) => {
   // Return the first `count` items
   return shuffled.slice(0, count);
 };
+
+export const removeAsterisks = (inputString: string) => {
+  return inputString.replace(/\*/g, "");
+};

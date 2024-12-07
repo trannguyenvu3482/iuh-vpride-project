@@ -63,8 +63,10 @@ const GoogleTextInput = ({
     >
       <GooglePlacesAutocomplete
         fetchDetails={true}
+        enablePoweredByContainer={false}
         placeholder="Search"
         debounce={200}
+        isRowScrollable={true}
         styles={{
           textInputContainer: {
             alignItems: "center",
