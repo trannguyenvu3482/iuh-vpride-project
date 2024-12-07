@@ -49,7 +49,7 @@ const Layout = () => {
           marginHorizontal: 20,
           marginBottom: 20,
           height: 78,
-          display: `${segments[3] === "[id]" ? "none" : "flex"}`,
+          display: `${(segments[3] && segments[3] === "[id]") || segments[3] === "gemini" ? "none" : "flex"}`,
           justifyContent: "space-around",
           alignItems: "center",
           flexDirection: "row",

@@ -6,7 +6,7 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { createClient } from "jsr:@supabase/supabase-js";
 import { ignoreLogger, VNPay } from "npm:vnpay";
 
 Deno.serve(async (req) => {
@@ -40,20 +40,7 @@ Deno.serve(async (req) => {
     vnpayHost: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
     testMode: true, // tùy chọn, ghi đè vnpayHost thành sandbox nếu là true
     hashAlgorithm: "SHA512", // tùy chọn
-
-    /**
-     * Sử dụng enableLog để bật/tắt logger
-     * Nếu enableLog là false, loggerFn sẽ không được sử dụng trong bất kỳ phương thức nào
-     */
     enableLog: true, // optional
-
-    /**
-     * Hàm `loggerFn` sẽ được gọi để ghi log
-     * Mặc định, loggerFn sẽ ghi log ra console
-     * Bạn có thể ghi đè loggerFn để ghi log ra nơi khác
-     *
-     * `ignoreLogger` là một hàm không làm gì cả
-     */
     loggerFn: ignoreLogger, // optional
   });
 
@@ -63,22 +50,9 @@ Deno.serve(async (req) => {
     vnp_TxnRef: "12345",
     vnp_OrderInfo: "Thanh toan don hang 1234",
     vnp_OrderType: 100000,
-    vnp_ReturnUrl: `${Deno.env.get("VNPAY_RETURN_URL")}`,
+    vnp_ReturnUrl: `exp://127.0.0.1:8081/--/(root)/confirm-ride`,
     vnp_Locale: "vn", // 'vn' hoặc 'en'
   });
-
-  const params = Object.fromEntries(
-    new URLSearchParams(paymentUrl.split("?")[1]),
-  );
-
-  supabase
-    .from("transactions")
-    .insert([
-      {
-        transaction_code: params,
-      },
-    ])
-    .select();
 
   const data = {
     message: `Hello world from Deno!`,

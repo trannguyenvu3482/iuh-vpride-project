@@ -20,6 +20,8 @@ declare interface IInputField extends TextInputProps {
   inputStyle?: string;
   iconStyle?: string;
   className?: string;
+  onAction?: () => void;
+  ActionIcon?: any;
 }
 
 declare interface ISupabaseClientOptions {

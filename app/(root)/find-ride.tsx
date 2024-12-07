@@ -58,8 +58,6 @@ const FindRide = () => {
           },
         });
 
-        console.log("RESPONSE", response);
-
         const info = response.data.rows[0].elements[0];
 
         const price = calculateTotalPrice(info.distance.value, carType);
@@ -138,7 +136,7 @@ const FindRide = () => {
           </Snackbar>
         </Modal>
       </Portal>
-      <RideLayout title="Tìm xe" snapPoints={["50%", "37%", "12%"]}>
+      <RideLayout title="Tìm xe" snapPoints={["100%", "37%", "50%"]}>
         <View className="mt-3">
           <SegmentedButtons
             density="small"

@@ -8,6 +8,7 @@ import {
   Pressable,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 const InputField = ({
@@ -19,6 +20,8 @@ const InputField = ({
   iconStyle,
   inputStyle,
   secureTextEntry = false,
+  onAction,
+  ActionIcon,
   ...props
 }: IInputField) => {
   return (
@@ -43,6 +46,9 @@ const InputField = ({
               secureTextEntry={secureTextEntry}
               {...props}
             />
+            {ActionIcon && (
+              <TouchableOpacity className="pr-4">{ActionIcon}</TouchableOpacity>
+            )}
           </View>
         </View>
       </Pressable>

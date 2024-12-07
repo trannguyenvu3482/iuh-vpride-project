@@ -2,6 +2,7 @@ import { icons } from "@/constants";
 import { calculateRegion, generateMarkersFromData } from "@/lib/map";
 import { getRandomItems } from "@/lib/utils";
 import { IMarkerData } from "@/types/type";
+import { useUserStore } from "@/zustand";
 import { useDriverStore } from "@/zustand/state/driverStore";
 import { useLocationStore } from "@/zustand/state/locationStore";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,6 +12,7 @@ import MapViewDirections from "react-native-maps-directions";
 
 const Map = () => {
   const { setDrivers, drivers, fetchDrivers } = useDriverStore();
+  const { isRiding } = useUserStore();
   const {
     userLongitude,
     userLatitude,
@@ -55,19 +57,20 @@ const Map = () => {
       ref={mapRef}
       showsMyLocationButton={true}
     >
-      {markers.map((marker) => {
-        return (
-          <Marker
-            key={marker.id}
-            coordinate={{
-              latitude: marker.latitude,
-              longitude: marker.longitude,
-            }}
-            title={marker.title}
-            image={icons.marker}
-          />
-        );
-      })}
+      {!isRiding &&
+        markers.map((marker) => {
+          return (
+            <Marker
+              key={marker.id}
+              coordinate={{
+                latitude: marker.latitude,
+                longitude: marker.longitude,
+              }}
+              title={marker.title}
+              image={icons.marker}
+            />
+          );
+        })}
 
       {destinationLatitude && destinationLongitude ? (
         <>

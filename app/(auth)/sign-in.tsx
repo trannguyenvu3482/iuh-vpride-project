@@ -1,4 +1,4 @@
-import { CustomButton, OAuth, OTPInput } from "@/components";
+import { CustomButton, OTPInput } from "@/components";
 import Loading from "@/components/Loading";
 import { images } from "@/constants";
 import { supabase } from "@/lib/supabase";
@@ -112,7 +112,7 @@ const SignUp = () => {
           </Text>
           <OTPInput otpInput={otpInput} setOtpInput={setOtpInput} />
           {mutation.isPending ? (
-            <Loading isLoading={true} />
+            <Loading />
           ) : (
             <CustomButton
               title="Xác thực"
@@ -121,7 +121,7 @@ const SignUp = () => {
               disabled={!valid}
             />
           )}
-          <OAuth />
+          {/* <OAuth /> */}
         </View>
         <ReactNativeModal isVisible={showSuccessModal}>
           <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
